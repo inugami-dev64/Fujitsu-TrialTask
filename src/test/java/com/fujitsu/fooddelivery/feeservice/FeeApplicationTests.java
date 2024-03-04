@@ -1,4 +1,4 @@
-package com.fujitsu.fooddelivery.fee;
+package com.fujitsu.fooddelivery.feeservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
