@@ -1,37 +1,40 @@
 package com.fujitsu.fooddelivery.feeservice.model;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Set;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name="locations")
+@Table(name = "weather_observations")
 @NoArgsConstructor
-public class Location {
+public class WeatherObservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter
     @Getter
+    @Setter
     private Integer id;
 
-    @Setter
     @Getter
-    private String country;
+    @Setter
+    private String phenomenon;
 
-    @Setter
     @Getter
-    private String city;
+    @Setter
+    private Float airtemperature;
+
+    @Getter
+    @Setter
+    private Float windSpeed;
+
+    @Getter
+    @Setter
+    private LocalDateTime timestamp;
 
     @OneToOne
-    @JoinColumn(name = "rbf_id")
-    @Setter
+    @JoinColumn(name = "station_id")
     @Getter
-    private RegionalBaseFee regionalBaseFee;
-
-    @OneToMany(mappedBy = "weather_stations")
     @Setter
-    @Getter
-    Set<WeatherStation> weatherStations;
+    private WeatherStation station;
 }

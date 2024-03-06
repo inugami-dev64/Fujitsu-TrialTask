@@ -6,32 +6,28 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="weather_apis")
+@Table(name = "weather_stations")
 @NoArgsConstructor
-public class WeatherApi {
+public class WeatherStation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter
     @Getter
+    @Setter
     private Integer id;
 
-    @Setter
     @Getter
+    @Setter
     private String name;
 
-    @Setter
     @Getter
-    private String organisation;
+    @Setter
+    private Integer wmoCode;
 
-    @Setter
     @Getter
-    private String endpointUrl;
+    @Setter
+    private Double longitude;
 
-    @Setter
     @Getter
-    private String country;
-
     @Setter
-    @Getter
-    private String apiType;
+    private Double latitude;
 }
