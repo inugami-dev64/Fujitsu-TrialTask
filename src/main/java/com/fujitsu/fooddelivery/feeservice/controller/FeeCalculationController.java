@@ -22,6 +22,7 @@ public class FeeCalculationController {
     @Autowired
     private LocationRepository locationRepository;
 
+
     private boolean isCorrectVehicle(String vehicle) {
         return vehicle.equalsIgnoreCase("car") || vehicle.equalsIgnoreCase("scooter") || vehicle.equalsIgnoreCase("bike");
     }

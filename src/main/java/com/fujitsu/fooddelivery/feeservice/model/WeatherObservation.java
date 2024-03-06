@@ -32,7 +32,7 @@ public class WeatherObservation {
     @Setter
     private LocalDateTime timestamp;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "station_id")
     @Getter
     @Setter

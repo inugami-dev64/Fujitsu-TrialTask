@@ -30,8 +30,9 @@ public class Location {
     @Getter
     private RegionalBaseFee regionalBaseFee;
 
-    @OneToMany(mappedBy = "weather_stations")
+    @OneToOne
+    @JoinColumn(name = "weather_station_id")
     @Setter
     @Getter
-    Set<WeatherStation> weatherStations;
+    WeatherStation weatherStation;
 }
