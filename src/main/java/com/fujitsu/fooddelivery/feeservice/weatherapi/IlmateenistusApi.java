@@ -45,12 +45,27 @@ public class IlmateenistusApi implements WeatherAPI {
         WeatherObservation observation = new WeatherObservation();
         Node stationObservation = this.document.selectSingleNode("//name[text() = '" + station.getName() + "']/..");
 
+        observation.setStation(station);
         extractTimestamp(this.document.getRootElement().attributeValue("timestamp"), observation);
         extractWeatherPhenomenonOrNull(stationObservation, observation);
         extractAirTemperature(stationObservation, observation);
         extractWindSpeedOrNull(stationObservation, observation);
 
         return observation;
+    }
+
+    @Override
+    public WeatherStation findWeatherStationByName(String name) {
+        Node stationNode = document.selectSingleNode("//name[text() = '" + name + "']/..");
+        if (stationNode == null)
+            return null;
+
+        WeatherStation station = new WeatherStation();
+        station.setName(name);
+        extractWmoCodeOrNull(stationNode, station);
+        extractLongitudeOrNull(stationNode, station);
+        extractLatitudeOrNull(stationNode, station);
+        return station;
     }
 
     @Override

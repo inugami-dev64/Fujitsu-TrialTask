@@ -28,28 +28,32 @@ public class CronWeatherImport {
     @Autowired
     private WeatherStationRepository weatherStationRepository;
     private Logger logger = Logger.getLogger(CronWeatherImport.class.getName());
-    private WeatherAPI weatherApi;
 
     public CronWeatherImport() throws MalformedURLException {
         this.logger = Logger.getLogger(CronWeatherImport.class.getName());
-
-        try {
-            this.weatherApi = new IlmateenistusApi();
-        }
-        catch (WeatherApiResponseException e) {
-            logger.severe("Could not create WeatherAPI object: " + e.getMessage());
-        }
     }
 
     @Async
-    @Scheduled(cron = "15 * * * * ?")
+    @Scheduled(cron = "0 15 * * * ?", zone = "Europe/Tallinn")
     public void scheduledWeatherDataImport() {
         logger.info("Performing a scheduled weather data import");
         List<WeatherStation> stations = weatherStationRepository.findAll();
+        WeatherAPI weatherApi = null;
+        try {
+            weatherApi = new IlmateenistusApi();
+        }
+        catch (WeatherApiResponseException e) {
+            logger.severe("Could not create WeatherAPI object: " + e.getMessage());
+            return;
+        }
+        catch (MalformedURLException e) {
+            logger.severe("Malformed URL expression used in WeatherAPI: " + e.getMessage());
+            return;
+        }
 
         for (WeatherStation station : stations) {
             try {
-                WeatherObservation observation = this.weatherApi.findTheMostRecentObservationByStation(station);
+                WeatherObservation observation = weatherApi.findTheMostRecentObservationByStation(station);
                 weatherObservationRepository.save(observation);
             }
             catch (WeatherStationNotFoundException e) {

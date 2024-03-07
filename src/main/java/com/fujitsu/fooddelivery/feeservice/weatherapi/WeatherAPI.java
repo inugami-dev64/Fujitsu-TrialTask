@@ -18,6 +18,13 @@ public interface WeatherAPI {
     WeatherObservation findTheMostRecentObservationByStation(WeatherStation station) throws WeatherApiResponseException, WeatherStationNotFoundException;
 
     /**
+     * Find a a weather station by specified station's name
+     * @param name station's name to use for searching
+     * @return a valid WeatherStation object if such station exists or null of it doesn't exist
+     */
+    WeatherStation findWeatherStationByName(String name);
+
+    /**
      * Query all weather stations supported by implementation specific API
      * @return a list containing all WeatherStation objects that were returned by the API
      * @throws WeatherApiResponseException
