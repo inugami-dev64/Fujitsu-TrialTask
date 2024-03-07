@@ -30,4 +30,9 @@ public class WeatherStation {
     @Getter
     @Setter
     private Double latitude;
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }
