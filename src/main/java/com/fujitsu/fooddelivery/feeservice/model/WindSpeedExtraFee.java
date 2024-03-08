@@ -14,16 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "wsef")
 @NoArgsConstructor
-public class WindSpeedExtraFee {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
-    private Integer id;
-
-    @Getter
-    @Setter
-    private LocalDateTime validFrom = LocalDateTime.now();
-
+public class WindSpeedExtraFee extends ExtraFee {
     @Getter
     @Setter
     private Float minWindSpeed;
@@ -32,27 +23,22 @@ public class WindSpeedExtraFee {
     @Setter
     private Float maxWindSpeed;
 
-    @Getter
-    @Setter
-    private BigDecimal extraFee;
+    public WindSpeedExtraFee(BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule, Float minWindSpeed, Float maxWindSpeed) {
+        super(extraFee, carRule, scooterRule, bikeRule);
+        this.minWindSpeed = minWindSpeed;
+        this.maxWindSpeed = maxWindSpeed;
+    }
 
-    @Getter
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private VehicleRule carRule;
+    public WindSpeedExtraFee(LocalDateTime validFrom, BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule, Float minWindSpeed, Float maxWindSpeed) {
+        super(validFrom, extraFee, carRule, scooterRule, bikeRule);
+        this.minWindSpeed = minWindSpeed;
+        this.maxWindSpeed = maxWindSpeed;
+    }
 
-    @Getter
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private VehicleRule scooterRule;
-
-    @Getter
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private VehicleRule bikeRule;
-
-    @Getter
-    @Setter
-    @ManyToMany
-    private Set<Location> locations;
+    @Override
+    public boolean matchesObservation(WeatherObservation observation) {
+        return observation.getWindSpeed() != null &&
+                (minWindSpeed == null || observation.getWindSpeed() >= minWindSpeed) &&
+                (maxWindSpeed == null || observation.getWindSpeed() < maxWindSpeed);
+    }
 }

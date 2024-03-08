@@ -5,43 +5,28 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-
-import java.util.Set;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "wpef")
-public class WeatherPhenomenonExtraFee {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
-    private Integer id;
-
+public class WeatherPhenomenonExtraFee extends ExtraFee {
     @Getter
     @Setter
     @Enumerated(EnumType.STRING)
     private WeatherPhenomenonClassification phenomenon;
 
-    @Getter
-    @Setter
-    private BigDecimal extraFee;
+    public WeatherPhenomenonExtraFee(BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule, WeatherPhenomenonClassification phenomenon) {
+        super(extraFee, carRule, scooterRule, bikeRule);
+        this.phenomenon = phenomenon;
+    }
 
-    @Getter
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private VehicleRule carRule;
+    public WeatherPhenomenonExtraFee(LocalDateTime validFrom, BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule, WeatherPhenomenonClassification phenomenon) {
+        super(validFrom, extraFee, carRule, scooterRule, bikeRule);
+        this.phenomenon = phenomenon;
+    }
 
-    @Getter
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private VehicleRule scooterRule;
-
-    @Getter
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private VehicleRule bikeRule;
-
-    @Getter
-    @Setter
-    @ManyToMany
-    private Set<Location> locations;
+    @Override
+    public boolean matchesObservation(WeatherObservation observation) {
+        return phenomenon == observation.getPhenomenon();
+    }
 }

@@ -37,17 +37,7 @@ public class Location {
     @ManyToMany
     @Setter
     @Getter
-    private Set<WeatherPhenomenonExtraFee> weatherPhenomenonExtraFees;
-
-    @ManyToMany
-    @Setter
-    @Getter
-    private Set<AirTemperatureExtraFee> airTemperatureExtraFees;
-
-    @ManyToMany
-    @Setter
-    @Getter
-    private Set<WindSpeedExtraFee> windSpeedExtraFees;
+    private Set<ExtraFee> extraFees;
 
     @OneToOne
     @JoinColumn(name = "weather_station_id")

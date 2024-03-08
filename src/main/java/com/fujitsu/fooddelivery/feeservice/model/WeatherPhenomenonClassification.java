@@ -6,6 +6,7 @@ public enum WeatherPhenomenonClassification {
     SNOW,
     RAIN,
     SLEET,
+    GLAZE,
     HAIL,
     MIST,
     FOG,

@@ -1,0 +1,78 @@
+package com.fujitsu.fooddelivery.feeservice.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Entity
+@Inheritance(strategy =  InheritanceType.SINGLE_TABLE)
+@NoArgsConstructor
+public abstract class ExtraFee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
+    private Integer id;
+
+    @Getter
+    @Setter
+    private LocalDateTime validFrom;
+
+    @Getter
+    @Setter
+    private BigDecimal extraFee;
+
+    @Getter
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private VehicleRule carRule;
+
+    @Getter
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private VehicleRule scooterRule;
+
+    @Getter
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private VehicleRule bikeRule;
+
+    public ExtraFee(BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule) {
+        this.validFrom = LocalDateTime.now();
+        this.extraFee = extraFee;
+        this.carRule = carRule;
+        this.scooterRule = scooterRule;
+        this.bikeRule = bikeRule;
+    }
+
+    public ExtraFee(LocalDateTime validFrom, BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule) {
+        this.validFrom = validFrom;
+        this.extraFee = extraFee;
+        this.carRule = carRule;
+        this.scooterRule = scooterRule;
+        this.bikeRule = bikeRule;
+    }
+
+    /**
+     * Checks if the given vehicle would be applicable for extra fee
+     * @param vehicle type of the vehicle
+     * @return VehicleRule enum that describes whether the vehicle is applicable for extra fee
+     */
+    public VehicleRule checkVehicleApplicability(VehicleType vehicle) {
+        return switch (vehicle) {
+            case CAR -> carRule;
+            case SCOOTER -> scooterRule;
+            case BIKE -> bikeRule;
+        };
+    }
+
+    /**
+     * Checks if the extra fee condition is met by weather observation
+     * @param observation instance of WeatherObservation to check against
+     * @return true if the weather observation matches given conditions or false if it doesn't
+     */
+    abstract boolean matchesObservation(WeatherObservation observation);
+}

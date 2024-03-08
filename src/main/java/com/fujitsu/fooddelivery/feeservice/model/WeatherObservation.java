@@ -18,7 +18,8 @@ public class WeatherObservation {
 
     @Getter
     @Setter
-    private String phenomenon;
+    @Enumerated(value = EnumType.STRING)
+    private WeatherPhenomenonClassification phenomenon;
 
     @Getter
     @Setter

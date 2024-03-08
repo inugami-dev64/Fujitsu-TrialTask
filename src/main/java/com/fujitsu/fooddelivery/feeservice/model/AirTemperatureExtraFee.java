@@ -12,16 +12,7 @@ import java.util.Set;
 @Entity
 @Table(name = "atef")
 @NoArgsConstructor
-public class AirTemperatureExtraFee {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
-    private Integer id;
-
-    @Getter
-    @Setter
-    private LocalDateTime validFrom = LocalDateTime.now();
-
+public class AirTemperatureExtraFee extends ExtraFee {
     @Getter
     @Setter
     private Float minTemperature;
@@ -30,27 +21,22 @@ public class AirTemperatureExtraFee {
     @Setter
     private Float maxTemperature;
 
-    @Getter
-    @Setter
-    private BigDecimal extraFee;
+    public AirTemperatureExtraFee(BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule, Float minTemperature, Float maxTemperature) {
+        super(extraFee, carRule, scooterRule, bikeRule);
+        this.minTemperature = minTemperature;
+        this.maxTemperature = maxTemperature;
+    }
 
-    @Getter
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private VehicleRule carRule;
+    public AirTemperatureExtraFee(LocalDateTime validFrom, BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule, Float minTemperature, Float maxTemperature) {
+        super(validFrom, extraFee, carRule, scooterRule, bikeRule);
+        this.minTemperature = minTemperature;
+        this.maxTemperature = maxTemperature;
+    }
 
-    @Getter
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private VehicleRule scooterRule;
-
-    @Getter
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private VehicleRule bikeRule;
-
-    @Getter
-    @Setter
-    @ManyToMany
-    Set<Location> locations;
+    @Override
+    public boolean matchesObservation(WeatherObservation observation) {
+        return observation.getAirtemperature() != null &&
+                (minTemperature == null || observation.getAirtemperature() >= minTemperature) &&
+                (maxTemperature == null || observation.getAirtemperature() < maxTemperature);
+    }
 }

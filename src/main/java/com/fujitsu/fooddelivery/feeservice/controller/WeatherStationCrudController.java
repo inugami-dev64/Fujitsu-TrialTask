@@ -24,7 +24,7 @@ import java.net.MalformedURLException;
 import java.util.logging.Logger;
 
 @RestController
-@RequestMapping("/api/weatherstation")
+@RequestMapping("/api/admin/weatherstation")
 public class WeatherStationCrudController {
     @Autowired
     private WeatherStationRepository weatherStationRepository;
