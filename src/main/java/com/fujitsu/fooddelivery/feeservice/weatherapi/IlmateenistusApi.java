@@ -5,6 +5,7 @@ import com.fujitsu.fooddelivery.feeservice.exception.WeatherStationNotFoundExcep
 import com.fujitsu.fooddelivery.feeservice.model.WeatherObservation;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherPhenomenonClassification;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherStation;
+import com.fujitsu.fooddelivery.feeservice.weatherapi.classifier.PhenomenonClassifier;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.InvalidXPathException;
@@ -106,7 +107,7 @@ public class IlmateenistusApi implements WeatherAPI {
     private void extractWeatherPhenomenonOrNull(Node station, WeatherObservation observation) {
         Node phenomenon = findSingleSubNodeOrNull(station, ".//phenomenon");
         if (phenomenon != null && !phenomenon.getText().isEmpty())
-            observation.setPhenomenon(WeatherPhenomenonClassification.CLEAR); // dummy
+            observation.setPhenomenon(PhenomenonClassifier.classify(phenomenon.getText())); // dummy
     }
 
     private void extractTimestamp(String timestampAttribute, WeatherObservation observation) throws WeatherApiResponseException {
