@@ -28,8 +28,4 @@ public class RegionalBaseFee {
     @Setter
     @Getter
     private BigDecimal bike;
-
-    @Setter
-    @Getter
-    private String currency;
 }

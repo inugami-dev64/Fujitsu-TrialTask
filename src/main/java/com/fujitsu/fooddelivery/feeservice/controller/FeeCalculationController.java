@@ -29,6 +29,12 @@ public class FeeCalculationController {
         return vehicle.equalsIgnoreCase("car") || vehicle.equalsIgnoreCase("scooter") || vehicle.equalsIgnoreCase("bike");
     }
 
+    /**
+     * GET request controller for /api/courierfee endpoint
+     * @param city specifies a city URL variable, which must reference a valid location in the database
+     * @param vehicle specifies a vehicle URL variable, which must be one of following values: "car", "scooter", "bike"
+     * @return
+     */
     @GetMapping("/courierfee")
     public ResponseEntity<?> courierfeeEndpoint(@RequestParam(value = "city", defaultValue = "") String city,
                                                 @RequestParam(value = "vehicle", defaultValue = "") String vehicle)
@@ -49,7 +55,7 @@ public class FeeCalculationController {
             else {
                 rbf = location.getRegionalBaseFee().getBike();
             }
-            return new ResponseEntity<>(new FeeResponse(rbf, location.getRegionalBaseFee().getCurrency()), HttpStatus.OK);
+            return new ResponseEntity<>(new FeeResponse(rbf, location.getCurrency()), HttpStatus.OK);
         }
 
         return new ResponseEntity<>(new ErrorResponse("Invalid city", HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);

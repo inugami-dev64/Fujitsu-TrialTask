@@ -24,11 +24,30 @@ public class Location {
     @Getter
     private String city;
 
+    @Setter
+    @Getter
+    private String currency;
+
     @OneToOne
     @JoinColumn(name = "rbf_id")
     @Setter
     @Getter
     private RegionalBaseFee regionalBaseFee;
+
+    @ManyToMany
+    @Setter
+    @Getter
+    private Set<WeatherPhenomenonExtraFee> weatherPhenomenonExtraFees;
+
+    @ManyToMany
+    @Setter
+    @Getter
+    private Set<AirTemperatureExtraFee> airTemperatureExtraFees;
+
+    @ManyToMany
+    @Setter
+    @Getter
+    private Set<WindSpeedExtraFee> windSpeedExtraFees;
 
     @OneToOne
     @JoinColumn(name = "weather_station_id")
