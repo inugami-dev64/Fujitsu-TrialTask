@@ -17,6 +17,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Badly written unit tests for testing IlmateenistusApiReader
+ */
 public class IlmateenistusApiReaderTests {
     @Test
     @DisplayName("Ensure that findWeatherStationByName() doesn't return null with valid XML values")
