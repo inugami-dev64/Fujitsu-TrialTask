@@ -1,10 +1,15 @@
 package com.fujitsu.fooddelivery.feeservice.controller;
 
+import com.fujitsu.fooddelivery.feeservice.exception.ForbiddenVehicleException;
 import com.fujitsu.fooddelivery.feeservice.model.Location;
+import com.fujitsu.fooddelivery.feeservice.model.VehicleType;
+import com.fujitsu.fooddelivery.feeservice.model.WeatherObservation;
 import com.fujitsu.fooddelivery.feeservice.model.repository.LocationRepository;
+import com.fujitsu.fooddelivery.feeservice.model.repository.WeatherObservationRepository;
 import com.fujitsu.fooddelivery.feeservice.representation.ErrorResponse;
 
 import com.fujitsu.fooddelivery.feeservice.representation.FeeResponse;
+import com.fujitsu.fooddelivery.feeservice.service.FeeCalculationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +28,8 @@ import java.math.BigDecimal;
 public class FeeCalculationController {
     @Autowired
     private LocationRepository locationRepository;
+    @Autowired
+    private WeatherObservationRepository weatherObservationRepository;
 
 
     private boolean isCorrectVehicle(String vehicle) {
@@ -45,17 +52,17 @@ public class FeeCalculationController {
 
         if (this.locationRepository.existsByCity(city)) {
             Location location = this.locationRepository.findByCity(city);
-            BigDecimal rbf;
-            if (vehicle.equalsIgnoreCase("car")) {
-                rbf = location.getRegionalBaseFee().getCar();
+            VehicleType type = VehicleType.valueOf(vehicle.toUpperCase());
+            FeeCalculationService feeCalculationService = new FeeCalculationService();
+            WeatherObservation observation = weatherObservationRepository.findByStationOrderByTimestampDesc(location.getWeatherStation());
+
+            try {
+                BigDecimal fee = feeCalculationService.calculate(location, type, observation);
+                return new ResponseEntity<>(new FeeResponse(fee, location.getCurrency()), HttpStatus.OK);
             }
-            else if (vehicle.equalsIgnoreCase("scooter")) {
-                rbf = location.getRegionalBaseFee().getScooter();
+            catch (ForbiddenVehicleException e) {
+                return new ResponseEntity<>(new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
             }
-            else {
-                rbf = location.getRegionalBaseFee().getBike();
-            }
-            return new ResponseEntity<>(new FeeResponse(rbf, location.getCurrency()), HttpStatus.OK);
         }
 
         return new ResponseEntity<>(new ErrorResponse("Invalid city", HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);

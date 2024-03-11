@@ -74,5 +74,5 @@ public abstract class ExtraFee {
      * @param observation instance of WeatherObservation to check against
      * @return true if the weather observation matches given conditions or false if it doesn't
      */
-    abstract boolean matchesObservation(WeatherObservation observation);
+    public abstract boolean matchesObservation(WeatherObservation observation);
 }
