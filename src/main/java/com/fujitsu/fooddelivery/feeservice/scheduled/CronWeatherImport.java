@@ -1,6 +1,5 @@
 package com.fujitsu.fooddelivery.feeservice.scheduled;
 
-import com.fujitsu.fooddelivery.feeservice.exception.WeatherApiException;
 import com.fujitsu.fooddelivery.feeservice.exception.WeatherApiResponseException;
 import com.fujitsu.fooddelivery.feeservice.exception.WeatherStationNotFoundException;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherObservation;
@@ -8,14 +7,18 @@ import com.fujitsu.fooddelivery.feeservice.model.repository.WeatherObservationRe
 import com.fujitsu.fooddelivery.feeservice.model.repository.WeatherStationRepository;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherStation;
 
-import com.fujitsu.fooddelivery.feeservice.weatherapi.IlmateenistusApi;
-import com.fujitsu.fooddelivery.feeservice.weatherapi.WeatherAPI;
+import com.fujitsu.fooddelivery.feeservice.weatherapi.IlmateenistusApiReader;
+import com.fujitsu.fooddelivery.feeservice.weatherapi.WeatherApiReader;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.logging.Logger;
@@ -38,12 +41,14 @@ public class CronWeatherImport {
     public void scheduledWeatherDataImport() {
         logger.info("Performing a scheduled weather data import");
         List<WeatherStation> stations = weatherStationRepository.findAll();
-        WeatherAPI weatherApi = null;
+        WeatherApiReader weatherApiReader = null;
         try {
-            weatherApi = new IlmateenistusApi();
+            SAXReader reader = new SAXReader();
+            Document document = reader.read(new URL(IlmateenistusApiReader.ENDPOINT));
+            weatherApiReader = new IlmateenistusApiReader(document);
         }
-        catch (WeatherApiResponseException e) {
-            logger.severe("Could not create WeatherAPI object: " + e.getMessage());
+        catch (DocumentException e) {
+            logger.severe("Failed to ");
             return;
         }
         catch (MalformedURLException e) {
@@ -53,7 +58,7 @@ public class CronWeatherImport {
 
         for (WeatherStation station : stations) {
             try {
-                WeatherObservation observation = weatherApi.findTheMostRecentObservationByStation(station);
+                WeatherObservation observation = weatherApiReader.findTheMostRecentObservationByStation(station);
                 weatherObservationRepository.save(observation);
             }
             catch (WeatherStationNotFoundException e) {

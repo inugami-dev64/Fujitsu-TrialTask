@@ -7,7 +7,7 @@ import com.fujitsu.fooddelivery.feeservice.model.WeatherStation;
 
 import java.util.List;
 
-public interface WeatherAPI {
+public interface WeatherApiReader {
     /**
      * Finds the most recent observation made by given weather station
      * @param station station whose observation to query

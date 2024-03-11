@@ -3,17 +3,14 @@ package com.fujitsu.fooddelivery.feeservice.weatherapi;
 import com.fujitsu.fooddelivery.feeservice.exception.WeatherApiResponseException;
 import com.fujitsu.fooddelivery.feeservice.exception.WeatherStationNotFoundException;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherObservation;
-import com.fujitsu.fooddelivery.feeservice.model.WeatherPhenomenonClassification;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherStation;
 import com.fujitsu.fooddelivery.feeservice.weatherapi.classifier.PhenomenonClassifier;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 import org.dom4j.InvalidXPathException;
 import org.dom4j.Node;
-import org.dom4j.io.SAXReader;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,37 +18,31 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 
-public class IlmateenistusApi implements WeatherAPI {
+public class IlmateenistusApiReader implements WeatherApiReader {
     private Logger logger;
     private Document document;
-    private static final String apiEndpoint = "https://www.ilmateenistus.ee/ilma_andmed/xml/observations.php";
+    public static final String ENDPOINT = "https://www.ilmateenistus.ee/ilma_andmed/xml/observations.php";
 
-    public IlmateenistusApi() throws MalformedURLException, WeatherApiResponseException {
-        this.logger = Logger.getLogger(IlmateenistusApi.class.getName());
-
-        this.logger.info("Querying data from 'ilmateenistus' API");
-        SAXReader reader = new SAXReader();
-
-        try {
-            this.document = reader.read(new URL(apiEndpoint));
-        }
-        catch (DocumentException e) {
-            throw new WeatherApiResponseException("Could not parse ilmateenistus API response: '" + e.getMessage() + "'");
-        }
+    public IlmateenistusApiReader(Document document) {
+        this.logger = Logger.getLogger(IlmateenistusApiReader.class.getName());
+        this.document = document;
     }
 
     @Override
     public WeatherObservation findTheMostRecentObservationByStation(WeatherStation station) throws WeatherApiResponseException, WeatherStationNotFoundException {
-        logger.info("Finding the most recent observation by given weather station from respones given by ilmateenistus XML ticker API");
+        logger.info("Finding the most recent observation by given weather station from respones given by Ilmateenistus XML ticker API");
 
         WeatherObservation observation = new WeatherObservation();
         Node stationObservation = this.document.selectSingleNode("//name[text() = '" + station.getName() + "']/..");
+        if (stationObservation == null)
+            throw new WeatherStationNotFoundException("Could not find weather station with name '" + station.getName() + "' from Ilmateenistus XML ticker API");
 
         observation.setStation(station);
         extractTimestamp(this.document.getRootElement().attributeValue("timestamp"), observation);
-        extractWeatherPhenomenonOrNull(stationObservation, observation);
         extractAirTemperature(stationObservation, observation);
-        extractWindSpeedOrNull(stationObservation, observation);
+        extractWindSpeed(stationObservation, observation);
+        extractWeatherPhenomenonOrNull(stationObservation, observation);
+
 
         return observation;
     }
@@ -116,7 +107,7 @@ public class IlmateenistusApi implements WeatherAPI {
             observation.setTimestamp(LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), TimeZone.getDefault().toZoneId()));
         }
         catch (NumberFormatException e) {
-            throw new WeatherApiResponseException("Could not parse timestamp from weather observations api response at '" + apiEndpoint + "'");
+            throw new WeatherApiResponseException("Could not parse timestamp from weather observations API response");
         }
     }
 
@@ -134,17 +125,19 @@ public class IlmateenistusApi implements WeatherAPI {
         }
     }
 
-    private void extractWindSpeedOrNull(Node station, WeatherObservation observation) {
+    private void extractWindSpeed(Node station, WeatherObservation observation) throws WeatherApiResponseException {
         Node windSpeed = findSingleSubNodeOrNull(station, ".//windspeed");
         if (windSpeed == null || windSpeed.getText().isEmpty())
-            return;
+            throw new WeatherApiResponseException("Could not extract wind speed from weather station");
 
         try {
             float wind = Float.parseFloat(windSpeed.getText());
             observation.setWindSpeed(wind);
         }
         catch (NumberFormatException e) {
-            logger.warning("Could not parse station's wind speed readings");
+            String msg = "Could not parse station's wind speed readings";
+            logger.warning(msg);
+            throw new WeatherApiResponseException(msg);
         }
     }
 
@@ -195,22 +188,6 @@ public class IlmateenistusApi implements WeatherAPI {
         }
         catch (NumberFormatException e) {
             logger.warning("Could not parse station's latitude from Ilmateenistus XML ticker API: " + e.getMessage());
-        }
-    }
-
-    /* Quick smoke testing */
-    public static void main(String[] args) throws MalformedURLException, WeatherApiResponseException, WeatherStationNotFoundException {
-        WeatherAPI api = new IlmateenistusApi();
-        List<WeatherStation> stations = api.findAllStations();
-        System.out.println(stations);
-
-        for (WeatherStation station : stations) {
-            WeatherObservation observation = api.findTheMostRecentObservationByStation(station);
-            System.out.println("\nStation: " + station);
-            System.out.println("Air temperature: "+ observation.getAirtemperature());
-            System.out.println("Wind speed: "+ observation.getWindSpeed());
-            System.out.println("Phenomenon: "+ observation.getPhenomenon());
-            System.out.println("Timestamp: "+ observation.getTimestamp().toString());
         }
     }
 }

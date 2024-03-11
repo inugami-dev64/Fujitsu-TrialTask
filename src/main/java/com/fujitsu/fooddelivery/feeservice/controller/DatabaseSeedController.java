@@ -5,8 +5,11 @@ import com.fujitsu.fooddelivery.feeservice.model.*;
 import com.fujitsu.fooddelivery.feeservice.model.repository.*;
 import com.fujitsu.fooddelivery.feeservice.representation.ErrorResponse;
 import com.fujitsu.fooddelivery.feeservice.representation.SuccessResponse;
-import com.fujitsu.fooddelivery.feeservice.weatherapi.WeatherAPI;
-import com.fujitsu.fooddelivery.feeservice.weatherapi.IlmateenistusApi;
+import com.fujitsu.fooddelivery.feeservice.weatherapi.WeatherApiReader;
+import com.fujitsu.fooddelivery.feeservice.weatherapi.IlmateenistusApiReader;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
@@ -51,8 +55,10 @@ public class DatabaseSeedController {
         return extraFees;
     }
 
-    private List<Location> generateLocations(Set<ExtraFee> extraFees) throws MalformedURLException, WeatherApiResponseException {
-        WeatherAPI api = new IlmateenistusApi();
+    private List<Location> generateLocations(Set<ExtraFee> extraFees) throws MalformedURLException, DocumentException {
+        SAXReader reader = new SAXReader();
+        Document document = reader.read(new URL(IlmateenistusApiReader.ENDPOINT));
+        WeatherApiReader api = new IlmateenistusApiReader(document);
         List<Location> locations = new ArrayList<>();
         // Tallinn
         locations.add(new Location());
@@ -112,8 +118,8 @@ public class DatabaseSeedController {
             this.logger.severe(e.getMessage());
             return new ResponseEntity<>(new ErrorResponse("Failed to initialize the database", HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        catch (WeatherApiResponseException e) {
-            this.logger.severe("Weather API's response was unexpected: " + e.getMessage());
+        catch (DocumentException e) {
+            this.logger.severe("Could not create instance of Document: " + e.getMessage());
             return new ResponseEntity<>(new ErrorResponse("Failed to initialize the database", HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

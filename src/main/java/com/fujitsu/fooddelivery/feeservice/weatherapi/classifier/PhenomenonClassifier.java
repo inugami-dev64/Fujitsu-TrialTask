@@ -46,8 +46,4 @@ public class PhenomenonClassifier {
 
         return WeatherPhenomenonClassification.CLEAR;
     }
-
-    public static void main(String[] args) {
-        System.out.println(classify("Cloudy with clear spills"));
-    }
 }
