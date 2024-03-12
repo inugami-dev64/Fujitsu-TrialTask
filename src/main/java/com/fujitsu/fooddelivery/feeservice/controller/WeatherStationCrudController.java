@@ -36,6 +36,11 @@ public class WeatherStationCrudController {
 
     private final Logger logger = Logger.getLogger(WeatherStationCrudController.class.getName());
 
+    /**
+     * Create a new
+     * @param body
+     * @return
+     */
     @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> create(@RequestBody WeatherStationRequestBody body) {
         // check if the weather api already exists

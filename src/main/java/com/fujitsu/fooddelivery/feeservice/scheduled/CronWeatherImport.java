@@ -48,7 +48,7 @@ public class CronWeatherImport {
             weatherApiReader = new IlmateenistusApiReader(document);
         }
         catch (DocumentException e) {
-            logger.severe("Failed to ");
+            logger.severe("Failed to parse the document received from Ilmateenistus API");
             return;
         }
         catch (MalformedURLException e) {

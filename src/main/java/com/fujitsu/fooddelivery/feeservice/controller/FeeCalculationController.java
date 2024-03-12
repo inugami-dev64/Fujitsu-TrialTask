@@ -40,7 +40,7 @@ public class FeeCalculationController {
      * GET request controller for /api/courierfee endpoint
      * @param city specifies a city URL variable, which must reference a valid location in the database
      * @param vehicle specifies a vehicle URL variable, which must be one of following values: "car", "scooter", "bike"
-     * @return
+     * @return a response entity that either contains calculated fee value if the request was successful or an error message.
      */
     @GetMapping("/courierfee")
     public ResponseEntity<?> courierfeeEndpoint(@RequestParam(value = "city", defaultValue = "") String city,
@@ -54,7 +54,7 @@ public class FeeCalculationController {
             Location location = this.locationRepository.findByCity(city);
             VehicleType type = VehicleType.valueOf(vehicle.toUpperCase());
             FeeCalculationService feeCalculationService = new FeeCalculationService();
-            WeatherObservation observation = weatherObservationRepository.findByStationOrderByTimestampDesc(location.getWeatherStation());
+            WeatherObservation observation = weatherObservationRepository.findFirstByStationOrderByTimestampDesc(location.getWeatherStation());
 
             try {
                 BigDecimal fee = feeCalculationService.calculate(location, type, observation);

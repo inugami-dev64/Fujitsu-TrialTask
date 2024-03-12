@@ -1,5 +1,7 @@
 package com.fujitsu.fooddelivery.feeservice.model;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,12 @@ import java.time.LocalDateTime;
 @Entity
 @Inheritance(strategy =  InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "extraFeeType")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = AirTemperatureExtraFee.class, name = "AirTemperatureExtraFee"),
+    @JsonSubTypes.Type(value = WeatherPhenomenonExtraFee.class, name = "WeatherPhenomenonExtraFee"),
+    @JsonSubTypes.Type(value = WindSpeedExtraFee.class, name = "WindSpeedExtraFee")
+})
 public abstract class ExtraFee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface WeatherObservationRepository extends JpaRepository<WeatherObservation, Integer> {
-    WeatherObservation findByStationOrderByTimestampDesc(WeatherStation station);
+    WeatherObservation findFirstByStationOrderByTimestampDesc(WeatherStation station);
 }

@@ -69,7 +69,7 @@ public class DatabaseSeedController {
         locations.get(locations.size()-1).setRegionalBaseFee(new RegionalBaseFee());
         locations.get(locations.size()-1).getRegionalBaseFee().setCar(new BigDecimal("4.00"));
         locations.get(locations.size()-1).getRegionalBaseFee().setScooter(new BigDecimal("3.50"));
-        locations.get(locations.size()-1).getRegionalBaseFee().setCar(new BigDecimal("3.00"));
+        locations.get(locations.size()-1).getRegionalBaseFee().setBike(new BigDecimal("3.00"));
         locations.get(locations.size()-1).setExtraFees(extraFees);
 
         // Tartu
@@ -92,19 +92,24 @@ public class DatabaseSeedController {
         locations.get(locations.size()-1).setWeatherStation(api.findWeatherStationByName("Pärnu"));
         locations.get(locations.size()-1).setRegionalBaseFee(new RegionalBaseFee());
         locations.get(locations.size()-1).getRegionalBaseFee().setCar(new BigDecimal("3.00"));
-        locations.get(locations.size()-1).getRegionalBaseFee().setCar(new BigDecimal("2.50"));
-        locations.get(locations.size()-1).getRegionalBaseFee().setCar(new BigDecimal("2.00"));
+        locations.get(locations.size()-1).getRegionalBaseFee().setScooter(new BigDecimal("2.50"));
+        locations.get(locations.size()-1).getRegionalBaseFee().setBike(new BigDecimal("2.00"));
         locations.get(locations.size()-1).setExtraFees(extraFees);
 
         return locations;
     }
 
+    /**
+     * GET request endpoint to initially seeds the database with data that was specified in the requirements document
+     * @return a response entity that either contains SuccessResponse when the seeding was successfully or ErrorResponse otherwise
+     */
     @GetMapping("/init")
     public ResponseEntity<?> seedDatabase() {
+        this.logger.info("Attempting to seed the database");
         if (locationRepository.count() != 0 || weatherStationRepository.count() != 0 || extraFeeRepository.count() != 0)
         {
             this.logger.warning("An attempt was made to initialize non-empty database");
-            return new ResponseEntity<ErrorResponse>(new ErrorResponse("Cannot initialize non-empty database", HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse("Cannot seed non-empty database", HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
         }
 
         Set<ExtraFee> extraFees = this.generateExtraFees();

@@ -4,5 +4,6 @@ import com.fujitsu.fooddelivery.feeservice.model.WeatherStation;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface WeatherStationRepository extends JpaRepository<WeatherStation, Integer> {
+    boolean existsByName(String name);
     WeatherStation findByName(String name);
 }
