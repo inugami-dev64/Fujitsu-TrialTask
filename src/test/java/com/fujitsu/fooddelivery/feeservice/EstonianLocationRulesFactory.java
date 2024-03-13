@@ -3,8 +3,9 @@ package com.fujitsu.fooddelivery.feeservice;
 import com.fujitsu.fooddelivery.feeservice.model.*;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * This class is used as factory class that produces Estonian locations and its rules as specified in the requirements document.<br>
@@ -25,8 +26,8 @@ import java.util.Set;
  *   &emsp;Weather phenomenon is related to glaze, hail, thunder - forbidden
  */
 public class EstonianLocationRulesFactory {
-    private static Set<ExtraFee> makeExtraFeeRules() {
-        Set<ExtraFee> extraFees = new HashSet<>();
+    private static List<ExtraFee> makeExtraFeeRules() {
+        List<ExtraFee> extraFees = new ArrayList<>();
         extraFees.add(new AirTemperatureExtraFee(new BigDecimal("1.00"), VehicleRule.NOT_APPLICABLE, VehicleRule.APPLICABLE, VehicleRule.APPLICABLE, null, -10.f));
         extraFees.add(new AirTemperatureExtraFee(new BigDecimal("0.50"), VehicleRule.NOT_APPLICABLE, VehicleRule.APPLICABLE, VehicleRule.APPLICABLE, -10.f, 0.f));
         extraFees.add(new WindSpeedExtraFee(new BigDecimal("0.50"), VehicleRule.NOT_APPLICABLE, VehicleRule.NOT_APPLICABLE, VehicleRule.APPLICABLE, 10.f, 20.f));
