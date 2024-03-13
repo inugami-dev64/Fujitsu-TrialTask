@@ -1,12 +1,11 @@
 package com.fujitsu.fooddelivery.feeservice.controller;
 
-import com.fujitsu.fooddelivery.feeservice.exception.WeatherApiResponseException;
 import com.fujitsu.fooddelivery.feeservice.model.*;
 import com.fujitsu.fooddelivery.feeservice.model.repository.*;
 import com.fujitsu.fooddelivery.feeservice.representation.ErrorResponse;
 import com.fujitsu.fooddelivery.feeservice.representation.SuccessResponse;
-import com.fujitsu.fooddelivery.feeservice.weatherapi.WeatherApiReader;
-import com.fujitsu.fooddelivery.feeservice.weatherapi.IlmateenistusApiReader;
+import com.fujitsu.fooddelivery.feeservice.service.weatherapi.WeatherApiReader;
+import com.fujitsu.fooddelivery.feeservice.service.weatherapi.IlmateenistusApiReader;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;

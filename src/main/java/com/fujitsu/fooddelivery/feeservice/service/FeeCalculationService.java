@@ -18,6 +18,15 @@ public class FeeCalculationService {
             case SCOOTER -> location.getRegionalBaseFee().getScooter();
         };
     }
+
+    /**
+     * Calculates the courier fee based on location, vehicle type and given weather observation
+     * @param location specifies a valid Location object that is used for the calculation
+     * @param type specifies the type of vehicle to use
+     * @param observation specifies the weather observation that is used to calculate extra fees for the courier
+     * @return BigDecimal object describing the final calculated fee
+     * @throws ForbiddenVehicleException
+     */
     public BigDecimal calculate(Location location, VehicleType type, WeatherObservation observation) throws ForbiddenVehicleException {
         BigDecimal fee = pickRbf(location, type);
         if (observation == null)

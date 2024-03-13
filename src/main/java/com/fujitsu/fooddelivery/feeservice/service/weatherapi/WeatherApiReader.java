@@ -1,4 +1,4 @@
-package com.fujitsu.fooddelivery.feeservice.weatherapi;
+package com.fujitsu.fooddelivery.feeservice.service.weatherapi;
 
 import com.fujitsu.fooddelivery.feeservice.exception.WeatherApiResponseException;
 import com.fujitsu.fooddelivery.feeservice.exception.WeatherStationNotFoundException;

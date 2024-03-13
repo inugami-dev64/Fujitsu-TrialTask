@@ -1,16 +1,14 @@
-package com.fujitsu.fooddelivery.feeservice.weatherapi;
+package com.fujitsu.fooddelivery.feeservice.service.weatherapi;
 
 import com.fujitsu.fooddelivery.feeservice.exception.WeatherApiResponseException;
 import com.fujitsu.fooddelivery.feeservice.exception.WeatherStationNotFoundException;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherObservation;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherStation;
-import com.fujitsu.fooddelivery.feeservice.weatherapi.classifier.PhenomenonClassifier;
+import com.fujitsu.fooddelivery.feeservice.service.weatherapi.classifier.PhenomenonClassifier;
 import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 import org.dom4j.InvalidXPathException;
 import org.dom4j.Node;
 
-import java.net.MalformedURLException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

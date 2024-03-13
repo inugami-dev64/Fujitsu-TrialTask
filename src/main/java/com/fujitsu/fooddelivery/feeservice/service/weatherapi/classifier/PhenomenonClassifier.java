@@ -1,4 +1,4 @@
-package com.fujitsu.fooddelivery.feeservice.weatherapi.classifier;
+package com.fujitsu.fooddelivery.feeservice.service.weatherapi.classifier;
 
 import com.fujitsu.fooddelivery.feeservice.model.WeatherPhenomenonClassification;
 import java.util.regex.Pattern;

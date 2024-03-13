@@ -1,4 +1,4 @@
-package com.fujitsu.fooddelivery.feeservice.scheduled;
+package com.fujitsu.fooddelivery.feeservice.service;
 
 import com.fujitsu.fooddelivery.feeservice.exception.WeatherApiResponseException;
 import com.fujitsu.fooddelivery.feeservice.exception.WeatherStationNotFoundException;
@@ -7,19 +7,15 @@ import com.fujitsu.fooddelivery.feeservice.model.repository.WeatherObservationRe
 import com.fujitsu.fooddelivery.feeservice.model.repository.WeatherStationRepository;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherStation;
 
-import com.fujitsu.fooddelivery.feeservice.weatherapi.IlmateenistusApiReader;
-import com.fujitsu.fooddelivery.feeservice.weatherapi.WeatherApiReader;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.io.SAXReader;
+import com.fujitsu.fooddelivery.feeservice.service.factory.WeatherApiProvider;
+import com.fujitsu.fooddelivery.feeservice.service.factory.WeatherApiReaderFactory;
+import com.fujitsu.fooddelivery.feeservice.service.weatherapi.WeatherApiReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.net.URL;
-import java.net.MalformedURLException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -32,7 +28,7 @@ public class CronWeatherImport {
     private WeatherStationRepository weatherStationRepository;
     private Logger logger = Logger.getLogger(CronWeatherImport.class.getName());
 
-    public CronWeatherImport() throws MalformedURLException {
+    public CronWeatherImport() {
         this.logger = Logger.getLogger(CronWeatherImport.class.getName());
     }
 
@@ -41,18 +37,10 @@ public class CronWeatherImport {
     public void scheduledWeatherDataImport() {
         logger.info("Performing a scheduled weather data import");
         List<WeatherStation> stations = weatherStationRepository.findAll();
-        WeatherApiReader weatherApiReader = null;
-        try {
-            SAXReader reader = new SAXReader();
-            Document document = reader.read(new URL(IlmateenistusApiReader.ENDPOINT));
-            weatherApiReader = new IlmateenistusApiReader(document);
-        }
-        catch (DocumentException e) {
-            logger.severe("Failed to parse the document received from Ilmateenistus API");
-            return;
-        }
-        catch (MalformedURLException e) {
-            logger.severe("Malformed URL expression used in WeatherAPI: " + e.getMessage());
+        WeatherApiReaderFactory apiReaderFactory = new WeatherApiReaderFactory();
+        WeatherApiReader weatherApiReader = apiReaderFactory.makeWeatherApiReader(WeatherApiProvider.ILMATEENISTUS);
+        if (weatherApiReader == null) {
+            logger.severe("Failed to perform scheduled weather data import");
             return;
         }
 

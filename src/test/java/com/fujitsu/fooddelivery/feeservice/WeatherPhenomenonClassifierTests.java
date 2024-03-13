@@ -3,7 +3,7 @@ package com.fujitsu.fooddelivery.feeservice;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fujitsu.fooddelivery.feeservice.model.WeatherPhenomenonClassification;
-import com.fujitsu.fooddelivery.feeservice.weatherapi.classifier.PhenomenonClassifier;
+import com.fujitsu.fooddelivery.feeservice.service.weatherapi.classifier.PhenomenonClassifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
