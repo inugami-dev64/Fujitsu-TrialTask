@@ -29,8 +29,8 @@ public class WindSpeedExtraFee extends ExtraFee {
         this.maxWindSpeed = maxWindSpeed;
     }
 
-    public WindSpeedExtraFee(LocalDateTime validFrom, BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule, Float minWindSpeed, Float maxWindSpeed) {
-        super(validFrom, extraFee, carRule, scooterRule, bikeRule);
+    public WindSpeedExtraFee(LocalDateTime validFrom, LocalDateTime expireTime, BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule, Float minWindSpeed, Float maxWindSpeed) {
+        super(validFrom, expireTime, extraFee, carRule, scooterRule, bikeRule);
         this.minWindSpeed = minWindSpeed;
         this.maxWindSpeed = maxWindSpeed;
     }

@@ -19,21 +19,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.logging.Logger;
 
 /**
  * FeeCalculationController is responsible for handling API consumer requests and giving out correct responses
  */
 @RestController
-@RequestMapping("/api")
 public class FeeCalculationController {
     @Autowired
     private LocationRepository locationRepository;
     @Autowired
     private WeatherObservationRepository weatherObservationRepository;
+    private Logger logger;
 
-
-    private boolean isCorrectVehicle(String vehicle) {
-        return vehicle.equalsIgnoreCase("car") || vehicle.equalsIgnoreCase("scooter") || vehicle.equalsIgnoreCase("bike");
+    public FeeCalculationController() {
+        logger = Logger.getLogger(FeeCalculationController.class.getName());
     }
 
     /**
@@ -42,19 +45,35 @@ public class FeeCalculationController {
      * @param vehicle specifies a vehicle URL variable, which must be one of following values: "car", "scooter", "bike"
      * @return a response entity that either contains calculated fee value if the request was successful or an error message.
      */
-    @GetMapping("/courierfee")
+    @GetMapping("/api/courierfee")
     public ResponseEntity<?> courierfeeEndpoint(@RequestParam(value = "city", defaultValue = "") String city,
-                                                @RequestParam(value = "vehicle", defaultValue = "") String vehicle)
+                                                @RequestParam(value = "vehicle", defaultValue = "") String vehicle,
+                                                @RequestParam(value = "unixTimestamp", defaultValue = "") String unixTimestamp)
     {
-        if (!this.isCorrectVehicle(vehicle)) {
-            return new ResponseEntity<ErrorResponse>(new ErrorResponse("Invalid vehicle type", HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
-        }
-
+        logger.info("Request made to endpoint /api/courierfee");
         if (this.locationRepository.existsByCity(city)) {
+            VehicleType type;
+            try {
+                type = VehicleType.valueOf(vehicle.toUpperCase());
+            }
+            catch (IllegalArgumentException e) {
+                logger.warning("Invalid vehicle argument given in '/api/courierfee/' endpoint");
+                return new ResponseEntity<>(new ErrorResponse("Invalid vehicle argument '" + vehicle + "'", HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+            }
             Location location = this.locationRepository.findByCity(city);
-            VehicleType type = VehicleType.valueOf(vehicle.toUpperCase());
             FeeCalculationService feeCalculationService = new FeeCalculationService();
-            WeatherObservation observation = weatherObservationRepository.findFirstByStationOrderByTimestampDesc(location.getWeatherStation());
+
+            WeatherObservation observation;
+            try {
+                long timestamp = Long.parseLong(unixTimestamp);
+                LocalDateTime ldt = Instant.ofEpochSecond(timestamp).atOffset(ZoneOffset.UTC).toLocalDateTime();
+                logger.info("Querying the most recent WeatherObservation entry at timestamp " + ldt);
+                observation = weatherObservationRepository.findFirstByStationAndTimestampLessThanEqualOrderByTimestampDesc(location.getWeatherStation(), ldt);
+            }
+            catch (NumberFormatException e) {
+                logger.info("Querying the most recent WeatherObservation entry from given weather station");
+                observation = weatherObservationRepository.findFirstByStationOrderByTimestampDesc(location.getWeatherStation());
+            }
 
             try {
                 BigDecimal fee = feeCalculationService.calculate(location, type, observation);

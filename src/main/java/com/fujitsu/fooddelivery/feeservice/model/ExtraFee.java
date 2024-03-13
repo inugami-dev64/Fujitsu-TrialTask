@@ -31,6 +31,10 @@ public abstract class ExtraFee {
 
     @Getter
     @Setter
+    private LocalDateTime expireTime;
+
+    @Getter
+    @Setter
     private BigDecimal extraFee;
 
     @Getter
@@ -56,8 +60,9 @@ public abstract class ExtraFee {
         this.bikeRule = bikeRule;
     }
 
-    public ExtraFee(LocalDateTime validFrom, BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule) {
+    public ExtraFee(LocalDateTime validFrom, LocalDateTime expireTime, BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule) {
         this.validFrom = validFrom;
+        this.expireTime = expireTime;
         this.extraFee = extraFee;
         this.carRule = carRule;
         this.scooterRule = scooterRule;
@@ -75,6 +80,15 @@ public abstract class ExtraFee {
             case SCOOTER -> scooterRule;
             case BIKE -> bikeRule;
         };
+    }
+
+    /**
+     * Checks whether the extra fee rule is currently valid it's validity date variables
+     * @return true if the extra fee rule is currently valid, false otherwise
+     */
+    public boolean isValid() {
+        final LocalDateTime now = LocalDateTime.now();
+        return this.validFrom.isBefore(now) && (this.expireTime == null || this.expireTime.isAfter(now));
     }
 
     /**

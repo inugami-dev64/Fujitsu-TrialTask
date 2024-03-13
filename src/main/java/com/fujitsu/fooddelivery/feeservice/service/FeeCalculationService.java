@@ -33,7 +33,7 @@ public class FeeCalculationService {
             return pickRbf(location, type);
 
         for (ExtraFee extraFee : location.getExtraFees()) {
-            if (extraFee.matchesObservation(observation)) {
+            if (extraFee.isValid() && extraFee.matchesObservation(observation)) {
                 switch (extraFee.checkVehicleApplicability(type)) {
                     case APPLICABLE:
                         fee = fee.add(extraFee.getExtraFee());

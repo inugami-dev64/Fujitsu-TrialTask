@@ -27,8 +27,8 @@ public class AirTemperatureExtraFee extends ExtraFee {
         this.maxTemperature = maxTemperature;
     }
 
-    public AirTemperatureExtraFee(LocalDateTime validFrom, BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule, Float minTemperature, Float maxTemperature) {
-        super(validFrom, extraFee, carRule, scooterRule, bikeRule);
+    public AirTemperatureExtraFee(LocalDateTime validFrom, LocalDateTime expireTime, BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule, Float minTemperature, Float maxTemperature) {
+        super(validFrom, expireTime, extraFee, carRule, scooterRule, bikeRule);
         this.minTemperature = minTemperature;
         this.maxTemperature = maxTemperature;
     }
