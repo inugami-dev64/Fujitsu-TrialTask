@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -39,8 +38,8 @@ public class DatabaseSeedController {
 
     private Logger logger = Logger.getLogger(DatabaseSeedController.class.getName());
 
-    private Set<ExtraFee> generateExtraFees() {
-        Set<ExtraFee> extraFees = new HashSet<>();
+    private List<ExtraFee> generateExtraFees() {
+        List<ExtraFee> extraFees = new ArrayList<>();
         extraFees.add(new AirTemperatureExtraFee(new BigDecimal("1.00"), VehicleRule.NOT_APPLICABLE, VehicleRule.APPLICABLE, VehicleRule.APPLICABLE, null, -10.0f));
         extraFees.add(new AirTemperatureExtraFee(new BigDecimal("0.50"), VehicleRule.NOT_APPLICABLE, VehicleRule.APPLICABLE, VehicleRule.APPLICABLE, -10.f, 0.f));
         extraFees.add(new WindSpeedExtraFee(new BigDecimal("0.50"), VehicleRule.NOT_APPLICABLE, VehicleRule.NOT_APPLICABLE, VehicleRule.APPLICABLE, 10.f, 20.f));
@@ -54,7 +53,7 @@ public class DatabaseSeedController {
         return extraFees;
     }
 
-    private List<Location> generateLocations(Set<ExtraFee> extraFees) throws MalformedURLException, DocumentException {
+    private List<Location> generateLocations() throws MalformedURLException, DocumentException {
         SAXReader reader = new SAXReader();
         Document document = reader.read(new URL(IlmateenistusApiReader.ENDPOINT));
         WeatherApiReader api = new IlmateenistusApiReader(document);
@@ -69,7 +68,7 @@ public class DatabaseSeedController {
         locations.get(locations.size()-1).getRegionalBaseFee().setCar(new BigDecimal("4.00"));
         locations.get(locations.size()-1).getRegionalBaseFee().setScooter(new BigDecimal("3.50"));
         locations.get(locations.size()-1).getRegionalBaseFee().setBike(new BigDecimal("3.00"));
-        locations.get(locations.size()-1).setExtraFees(extraFees);
+        locations.get(locations.size()-1).setExtraFees(generateExtraFees());
 
         // Tartu
         locations.add(new Location());
@@ -81,7 +80,7 @@ public class DatabaseSeedController {
         locations.get(locations.size()-1).getRegionalBaseFee().setCar(new BigDecimal("3.50"));
         locations.get(locations.size()-1).getRegionalBaseFee().setScooter(new BigDecimal("3.00"));
         locations.get(locations.size()-1).getRegionalBaseFee().setBike(new BigDecimal("2.50"));
-        locations.get(locations.size()-1).setExtraFees(extraFees);
+        locations.get(locations.size()-1).setExtraFees(generateExtraFees());
 
         // Pärnu
         locations.add(new Location());
@@ -93,7 +92,7 @@ public class DatabaseSeedController {
         locations.get(locations.size()-1).getRegionalBaseFee().setCar(new BigDecimal("3.00"));
         locations.get(locations.size()-1).getRegionalBaseFee().setScooter(new BigDecimal("2.50"));
         locations.get(locations.size()-1).getRegionalBaseFee().setBike(new BigDecimal("2.00"));
-        locations.get(locations.size()-1).setExtraFees(extraFees);
+        locations.get(locations.size()-1).setExtraFees(generateExtraFees());
 
         return locations;
     }
@@ -111,12 +110,9 @@ public class DatabaseSeedController {
             return new ResponseEntity<ErrorResponse>(new ErrorResponse("Cannot seed non-empty database", HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
         }
 
-        Set<ExtraFee> extraFees = this.generateExtraFees();
-        extraFeeRepository.saveAll(extraFees);
-
         List<Location> locations;
         try {
-            locations = this.generateLocations(extraFees);
+            locations = this.generateLocations();
         }
         catch (MalformedURLException e) {
             this.logger.severe(e.getMessage());

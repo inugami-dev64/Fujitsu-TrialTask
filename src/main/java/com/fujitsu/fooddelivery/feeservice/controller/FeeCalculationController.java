@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -60,10 +61,10 @@ public class FeeCalculationController {
                 logger.warning("Invalid vehicle argument given in '/api/courierfee/' endpoint");
                 return new ResponseEntity<>(new ErrorResponse("Invalid vehicle argument '" + vehicle + "'", HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
             }
-            Location location = this.locationRepository.findByCity(city);
+            Location location = this.locationRepository.findByCity(city).get();
             FeeCalculationService feeCalculationService = new FeeCalculationService();
 
-            WeatherObservation observation;
+            Optional<WeatherObservation> observation;
             try {
                 long timestamp = Long.parseLong(unixTimestamp);
                 LocalDateTime ldt = Instant.ofEpochSecond(timestamp).atOffset(ZoneOffset.UTC).toLocalDateTime();
@@ -76,7 +77,7 @@ public class FeeCalculationController {
             }
 
             try {
-                BigDecimal fee = feeCalculationService.calculate(location, type, observation);
+                BigDecimal fee = feeCalculationService.calculate(location, type, observation.orElse(null));
                 return new ResponseEntity<>(new FeeResponse(fee, location.getCurrency()), HttpStatus.OK);
             }
             catch (ForbiddenVehicleException e) {

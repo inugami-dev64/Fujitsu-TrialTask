@@ -1,6 +1,6 @@
 package com.fujitsu.fooddelivery.feeservice.service;
 
-import com.fujitsu.fooddelivery.feeservice.exception.WeatherApiResponseException;
+import com.fujitsu.fooddelivery.feeservice.exception.WeatherApiException;
 import com.fujitsu.fooddelivery.feeservice.exception.WeatherStationNotFoundException;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherObservation;
 import com.fujitsu.fooddelivery.feeservice.model.repository.WeatherObservationRepository;
@@ -53,7 +53,7 @@ public class CronWeatherImport {
                 logger.warning(e.getMessage());
                 logger.warning("Skipping weather observation update for '" + station.getName() + "'");
             }
-            catch (WeatherApiResponseException e) {
+            catch (WeatherApiException e) {
                 logger.warning(e.getMessage());
                 logger.warning("This could indicate a problem with integrity of data from the external API");
             }

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name="locations")
@@ -39,10 +39,10 @@ public class Location {
     @NotNull(message = "Regional base fee must be specified")
     private RegionalBaseFee regionalBaseFee;
 
-    @ManyToMany
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
     @Setter
     @Getter
-    private Set<ExtraFee> extraFees;
+    private List<ExtraFee> extraFees;
 
     @OneToOne
     @JoinColumn(name = "weather_station_id")

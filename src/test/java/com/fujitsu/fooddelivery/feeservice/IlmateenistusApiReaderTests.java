@@ -1,7 +1,7 @@
 package com.fujitsu.fooddelivery.feeservice;
 
 import com.fujitsu.fooddelivery.feeservice.exception.ApiException;
-import com.fujitsu.fooddelivery.feeservice.exception.WeatherApiResponseException;
+import com.fujitsu.fooddelivery.feeservice.exception.WeatherApiException;
 import com.fujitsu.fooddelivery.feeservice.exception.WeatherStationNotFoundException;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherStation;
 import com.fujitsu.fooddelivery.feeservice.service.weatherapi.IlmateenistusApiReader;
@@ -81,7 +81,7 @@ public class IlmateenistusApiReaderTests {
 
         Document document = DocumentHelper.parseText(testXml);
         WeatherApiReader reader = new IlmateenistusApiReader(document);
-        assertThrows(WeatherApiResponseException.class, reader::findAllStations);
+        assertThrows(WeatherApiException.class, reader::findAllStations);
     }
 
     @Test
@@ -166,7 +166,7 @@ public class IlmateenistusApiReaderTests {
 
         Document document = DocumentHelper.parseText(testXml);
         WeatherApiReader reader = new IlmateenistusApiReader(document);
-        assertThrows(WeatherApiResponseException.class, () -> {
+        assertThrows(WeatherApiException.class, () -> {
             reader.findTheMostRecentObservationByStation(station);
         });
     }
@@ -221,7 +221,7 @@ public class IlmateenistusApiReaderTests {
 
         Document document = DocumentHelper.parseText(testXml);
         WeatherApiReader reader = new IlmateenistusApiReader(document);
-        assertThrows(WeatherApiResponseException.class, () -> {
+        assertThrows(WeatherApiException.class, () -> {
             reader.findTheMostRecentObservationByStation(station);
         });
     }
@@ -249,7 +249,7 @@ public class IlmateenistusApiReaderTests {
 
         Document document = DocumentHelper.parseText(testXml);
         WeatherApiReader reader = new IlmateenistusApiReader(document);
-        assertThrows(WeatherApiResponseException.class, () -> {
+        assertThrows(WeatherApiException.class, () -> {
             reader.findTheMostRecentObservationByStation(station);
         });
     }

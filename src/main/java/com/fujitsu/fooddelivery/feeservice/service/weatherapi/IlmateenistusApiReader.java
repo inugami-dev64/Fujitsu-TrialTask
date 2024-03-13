@@ -1,6 +1,6 @@
 package com.fujitsu.fooddelivery.feeservice.service.weatherapi;
 
-import com.fujitsu.fooddelivery.feeservice.exception.WeatherApiResponseException;
+import com.fujitsu.fooddelivery.feeservice.exception.WeatherApiException;
 import com.fujitsu.fooddelivery.feeservice.exception.WeatherStationNotFoundException;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherObservation;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherStation;
@@ -27,7 +27,7 @@ public class IlmateenistusApiReader implements WeatherApiReader {
     }
 
     @Override
-    public WeatherObservation findTheMostRecentObservationByStation(WeatherStation station) throws WeatherApiResponseException, WeatherStationNotFoundException {
+    public WeatherObservation findTheMostRecentObservationByStation(WeatherStation station) throws WeatherApiException {
         logger.info("Finding the most recent observation by given weather station from respones given by Ilmateenistus XML ticker API");
 
         WeatherObservation observation = new WeatherObservation();
@@ -60,7 +60,7 @@ public class IlmateenistusApiReader implements WeatherApiReader {
     }
 
     @Override
-    public List<WeatherStation> findAllStations() throws WeatherApiResponseException {
+    public List<WeatherStation> findAllStations() throws WeatherApiException {
         logger.info("Finding all stations from response given by ilmateenistus XML ticker API");
         List<WeatherStation> weatherStations = new ArrayList<>();
         List<Node> stations = document.selectNodes("//station");
@@ -99,34 +99,34 @@ public class IlmateenistusApiReader implements WeatherApiReader {
             observation.setPhenomenon(PhenomenonClassifier.classify(phenomenon.getText())); // dummy
     }
 
-    private void extractTimestamp(String timestampAttribute, WeatherObservation observation) throws WeatherApiResponseException {
+    private void extractTimestamp(String timestampAttribute, WeatherObservation observation) throws WeatherApiException {
         try {
             long timestamp = Long.parseLong(timestampAttribute);
             observation.setTimestamp(LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), TimeZone.getDefault().toZoneId()));
         }
         catch (NumberFormatException e) {
-            throw new WeatherApiResponseException("Could not parse timestamp from weather observations API response");
+            throw new WeatherApiException("Could not parse timestamp from weather observations API response");
         }
     }
 
-    private void extractAirTemperature(Node station, WeatherObservation observation) throws WeatherApiResponseException {
+    private void extractAirTemperature(Node station, WeatherObservation observation) throws WeatherApiException {
         Node airTemperature = findSingleSubNodeOrNull(station, ".//airtemperature");
         if (airTemperature == null)
-            throw new WeatherApiResponseException("<airtemperature> tag does not exist in weather station tag");
+            throw new WeatherApiException("<airtemperature> tag does not exist in weather station tag");
 
         try {
             float temperature = Float.parseFloat(airTemperature.getText());
             observation.setAirtemperature(temperature);
         }
         catch (NumberFormatException e) {
-            throw new WeatherApiResponseException("Could not parse weather station's air temperature tag");
+            throw new WeatherApiException("Could not parse weather station's air temperature tag");
         }
     }
 
-    private void extractWindSpeed(Node station, WeatherObservation observation) throws WeatherApiResponseException {
+    private void extractWindSpeed(Node station, WeatherObservation observation) throws WeatherApiException {
         Node windSpeed = findSingleSubNodeOrNull(station, ".//windspeed");
         if (windSpeed == null || windSpeed.getText().isEmpty())
-            throw new WeatherApiResponseException("Could not extract wind speed from weather station");
+            throw new WeatherApiException("Could not extract wind speed from weather station");
 
         try {
             float wind = Float.parseFloat(windSpeed.getText());
@@ -135,14 +135,14 @@ public class IlmateenistusApiReader implements WeatherApiReader {
         catch (NumberFormatException e) {
             String msg = "Could not parse station's wind speed readings";
             logger.warning(msg);
-            throw new WeatherApiResponseException(msg);
+            throw new WeatherApiException(msg);
         }
     }
 
-    private void extractName(Node stationNode, WeatherStation station) throws WeatherApiResponseException {
+    private void extractName(Node stationNode, WeatherStation station) throws WeatherApiException {
         Node nameNode = findSingleSubNodeOrNull(stationNode, ".//name");
         if (nameNode == null || nameNode.getText().isEmpty())
-            throw new WeatherApiResponseException("Could not find station name from Ilmateenistus XML ticker API response");
+            throw new WeatherApiException("Could not find station name from Ilmateenistus XML ticker API response");
 
         station.setName(nameNode.getText().trim());
     }

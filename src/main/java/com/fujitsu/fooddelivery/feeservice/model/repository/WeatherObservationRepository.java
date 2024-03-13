@@ -8,6 +8,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface WeatherObservationRepository extends JpaRepository<WeatherObservation, Integer> {
-    WeatherObservation findFirstByStationOrderByTimestampDesc(WeatherStation station);
-    WeatherObservation findFirstByStationAndTimestampLessThanEqualOrderByTimestampDesc(WeatherStation station, LocalDateTime timestamp);
+    Optional<WeatherObservation> findFirstByStationOrderByTimestampDesc(WeatherStation station);
+    Optional<WeatherObservation> findFirstByStationAndTimestampLessThanEqualOrderByTimestampDesc(WeatherStation station, LocalDateTime timestamp);
 }
