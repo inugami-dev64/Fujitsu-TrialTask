@@ -8,12 +8,14 @@ import com.fujitsu.fooddelivery.feeservice.model.WeatherStation;
 import com.fujitsu.fooddelivery.feeservice.model.repository.LocationRepository;
 import jakarta.validation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@Component(value = "locationCrudService")
 public class LocationCrudServiceImpl implements LocationCrudService {
     @Autowired
     private LocationRepository locationRepository;
@@ -35,6 +37,9 @@ public class LocationCrudServiceImpl implements LocationCrudService {
     public List<Location> getAllLocations() {
         return locationRepository.findAll();
     }
+
+    @Override
+    public Location getLocationById(Integer id) { return locationRepository.findById(id).orElse(null); }
 
     @Override
     public Location updateLocation(Location location, Integer id) throws InvalidIdentifierException, ConstraintViolationException {
@@ -70,13 +75,10 @@ public class LocationCrudServiceImpl implements LocationCrudService {
         }
 
         // weather station
-        if (location.getWeatherStation() != null && (location.getWeatherStation().getName() != null || location.getWeatherStation().getId() != null)) {
-            WeatherStation station = null;
-            if (location.getWeatherStation().getId() != null && (station = weatherStationQueryService.findById(location.getWeatherStation().getId())) == null)
-                throw new InvalidIdentifierException("Invalid weather station identifier id=" + location.getWeatherStation().getId());
-            else if (location.getWeatherStation().getId() == null && (station = weatherStationQueryService.findByName(location.getWeatherStation().getName())) == null)
-                throw new InvalidIdentifierException("Invalid weather station identifier name=" + location.getWeatherStation().getName());
-
+        if (location.getWeatherStation() != null && location.getWeatherStation().getName() != null) {
+            WeatherStation station = weatherStationQueryService.findByName(location.getWeatherStation().getName());
+            if (station == null)
+                throw new InvalidIdentifierException("Invalid weather station name identifier '" + location.getWeatherStation().getName() + "'");
             dbLocation.setWeatherStation(station);
         }
 

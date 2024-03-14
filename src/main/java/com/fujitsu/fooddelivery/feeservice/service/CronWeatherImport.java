@@ -33,7 +33,7 @@ public class CronWeatherImport {
     }
 
     @Async
-    @Scheduled(cron = "0 15 * * * ?", zone = "Europe/Tallinn")
+    @Scheduled(cron = "0 7 * * * ?", zone = "Europe/Tallinn")
     public void scheduledWeatherDataImport() {
         logger.info("Performing a scheduled weather data import");
         List<WeatherStation> stations = weatherStationRepository.findAll();

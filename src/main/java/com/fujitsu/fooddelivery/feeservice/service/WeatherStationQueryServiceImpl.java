@@ -6,10 +6,12 @@ import com.fujitsu.fooddelivery.feeservice.service.factory.WeatherApiReaderFacto
 import com.fujitsu.fooddelivery.feeservice.service.weatherapi.WeatherApiReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.List;
 
+@Component(value = "weatherStationQueryService")
 public class WeatherStationQueryServiceImpl implements WeatherStationQueryService {
     @Autowired
     private WeatherStationRepository weatherStationRepository;

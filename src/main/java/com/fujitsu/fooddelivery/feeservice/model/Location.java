@@ -32,19 +32,19 @@ public class Location {
     @NotNull(message = "Currency must be specified")
     private String currency;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "rbf_id")
     @Setter
     @Getter
     @NotNull(message = "Regional base fee must be specified")
     private RegionalBaseFee regionalBaseFee;
 
-    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     @Setter
     @Getter
     private List<ExtraFee> extraFees;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "weather_station_id")
     @Setter
     @Getter

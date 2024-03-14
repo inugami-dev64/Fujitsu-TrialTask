@@ -2,6 +2,7 @@ package com.fujitsu.fooddelivery.feeservice.controller;
 
 import com.fujitsu.fooddelivery.feeservice.model.*;
 import com.fujitsu.fooddelivery.feeservice.model.repository.*;
+import com.fujitsu.fooddelivery.feeservice.representation.BadRequestErrorResponse;
 import com.fujitsu.fooddelivery.feeservice.representation.ErrorResponse;
 import com.fujitsu.fooddelivery.feeservice.representation.SuccessResponse;
 import com.fujitsu.fooddelivery.feeservice.service.weatherapi.WeatherApiReader;
@@ -107,7 +108,7 @@ public class DatabaseSeedController {
         if (locationRepository.count() != 0 || weatherStationRepository.count() != 0 || extraFeeRepository.count() != 0)
         {
             this.logger.warning("An attempt was made to initialize non-empty database");
-            return new ResponseEntity<ErrorResponse>(new ErrorResponse("Cannot seed non-empty database", HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(new BadRequestErrorResponse("Cannot seed non-empty database"));
         }
 
         List<Location> locations;
@@ -116,11 +117,11 @@ public class DatabaseSeedController {
         }
         catch (MalformedURLException e) {
             this.logger.severe(e.getMessage());
-            return new ResponseEntity<>(new ErrorResponse("Failed to initialize the database", HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.badRequest().body(new BadRequestErrorResponse("Failed to initialize the database"));
         }
         catch (DocumentException e) {
             this.logger.severe("Could not create instance of Document: " + e.getMessage());
-            return new ResponseEntity<>(new ErrorResponse("Failed to initialize the database", HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.badRequest().body(new BadRequestErrorResponse("Failed to initialize the database"));
         }
 
         // for each location save RBF, and weather station

@@ -3,6 +3,7 @@ package com.fujitsu.fooddelivery.feeservice.model;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public abstract class ExtraFee {
 
     @Getter
     @Setter
-    private LocalDateTime validFrom;
+    private LocalDateTime validFrom = LocalDateTime.now();
 
     @Getter
     @Setter
@@ -35,22 +36,23 @@ public abstract class ExtraFee {
 
     @Getter
     @Setter
+    @NotNull(message = "Extra fee attribute must be specified")
     private BigDecimal extraFee;
 
     @Getter
     @Setter
     @Enumerated(EnumType.STRING)
-    private VehicleRule carRule;
+    private VehicleRule carRule = VehicleRule.NOT_APPLICABLE;
 
     @Getter
     @Setter
     @Enumerated(EnumType.STRING)
-    private VehicleRule scooterRule;
+    private VehicleRule scooterRule = VehicleRule.NOT_APPLICABLE;
 
     @Getter
     @Setter
     @Enumerated(EnumType.STRING)
-    private VehicleRule bikeRule;
+    private VehicleRule bikeRule = VehicleRule.NOT_APPLICABLE;
 
     public ExtraFee(BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule) {
         this.validFrom = LocalDateTime.now();

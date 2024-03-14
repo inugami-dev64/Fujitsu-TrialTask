@@ -1,6 +1,7 @@
 package com.fujitsu.fooddelivery.feeservice.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,7 @@ public class WeatherPhenomenonExtraFee extends ExtraFee {
     @Getter
     @Setter
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "Weather phenomenon must be specified for WeatherPhenomenonExtraFee")
     private WeatherPhenomenonClassification phenomenon;
 
     public WeatherPhenomenonExtraFee(BigDecimal extraFee, VehicleRule carRule, VehicleRule scooterRule, VehicleRule bikeRule, WeatherPhenomenonClassification phenomenon) {
