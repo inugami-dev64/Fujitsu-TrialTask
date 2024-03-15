@@ -1,7 +1,8 @@
-package com.fujitsu.fooddelivery.feeservice.service;
+package com.fujitsu.fooddelivery.feeservice.service.impl;
 
 import com.fujitsu.fooddelivery.feeservice.model.WeatherStation;
 import com.fujitsu.fooddelivery.feeservice.model.repository.WeatherStationRepository;
+import com.fujitsu.fooddelivery.feeservice.service.WeatherStationQueryService;
 import com.fujitsu.fooddelivery.feeservice.service.factory.WeatherApiReaderFactory;
 import com.fujitsu.fooddelivery.feeservice.service.weatherapi.WeatherApiReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class WeatherStationQueryServiceImpl implements WeatherStationQueryServic
      * Updates the WeatherApiReader list so that the external API results would be relatively up-to date.<br>
      * This method is scheduled to run automatically every hour.
      */
-    @Scheduled(fixedDelay = 60*60*60)
+    @Scheduled(fixedDelay = 1000*60*60*60)
     public void updateExternalApiReaderCache() {
         WeatherApiReaderFactory factory = new WeatherApiReaderFactory();
         weatherApiReaders = factory.makeAllWeatherApiReaders();

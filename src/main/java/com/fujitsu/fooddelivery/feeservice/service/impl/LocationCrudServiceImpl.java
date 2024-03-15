@@ -1,4 +1,4 @@
-package com.fujitsu.fooddelivery.feeservice.service;
+package com.fujitsu.fooddelivery.feeservice.service.impl;
 
 import com.fujitsu.fooddelivery.feeservice.exception.InvalidIdentifierException;
 import com.fujitsu.fooddelivery.feeservice.model.ExtraFee;
@@ -6,6 +6,8 @@ import com.fujitsu.fooddelivery.feeservice.model.Location;
 import com.fujitsu.fooddelivery.feeservice.model.RegionalBaseFee;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherStation;
 import com.fujitsu.fooddelivery.feeservice.model.repository.LocationRepository;
+import com.fujitsu.fooddelivery.feeservice.service.LocationCrudService;
+import com.fujitsu.fooddelivery.feeservice.service.WeatherStationQueryService;
 import jakarta.validation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -58,7 +60,7 @@ public class LocationCrudServiceImpl implements LocationCrudService {
             dbLocation.setRegionalBaseFee(location.getRegionalBaseFee());
         }
 
-        // extra fee
+        // update extra fee rules is necessary
         if (location.getExtraFees() != null) {
             Set<ConstraintViolation<ExtraFee>> extraFeeViolations = new HashSet<>();
             for (ExtraFee extraFee : location.getExtraFees()) {

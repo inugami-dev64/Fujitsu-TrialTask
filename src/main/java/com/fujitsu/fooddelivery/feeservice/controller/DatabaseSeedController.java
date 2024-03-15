@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+/**
+ * DatabaseSeedController is responsible for keeping an endpoint to use for database initialization
+ */
 @RestController
 @RequestMapping("/api/admin/data")
 public class DatabaseSeedController {
@@ -99,7 +102,7 @@ public class DatabaseSeedController {
     }
 
     /**
-     * GET request endpoint to initially seeds the database with data that was specified in the requirements document
+     * GET request endpoint to initially seed the database with data that was specified in the requirements document
      * @return a response entity that either contains SuccessResponse when the seeding was successfully or ErrorResponse otherwise
      */
     @GetMapping("/init")
@@ -108,7 +111,7 @@ public class DatabaseSeedController {
         if (locationRepository.count() != 0 || weatherStationRepository.count() != 0 || extraFeeRepository.count() != 0)
         {
             this.logger.warning("An attempt was made to initialize non-empty database");
-            return ResponseEntity.badRequest().body(new BadRequestErrorResponse("Cannot seed non-empty database"));
+            return ResponseEntity.notFound().build();
         }
 
         List<Location> locations;

@@ -2,7 +2,7 @@ package com.fujitsu.fooddelivery.feeservice;
 
 import com.fujitsu.fooddelivery.feeservice.exception.ForbiddenVehicleException;
 import com.fujitsu.fooddelivery.feeservice.model.*;
-import com.fujitsu.fooddelivery.feeservice.service.FeeCalculationService;
+import com.fujitsu.fooddelivery.feeservice.service.impl.FeeCalculationServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +23,7 @@ public class FeeCalculationServiceTests {
         observation.setWindSpeed(4.7f);
         observation.setPhenomenon(WeatherPhenomenonClassification.SNOW);
 
-        FeeCalculationService service = new FeeCalculationService();
+        FeeCalculationServiceImpl service = new FeeCalculationServiceImpl();
         try {
             BigDecimal fee = service.calculate(location, type, observation);
             assertEquals(new BigDecimal("4.00"), fee);
@@ -42,7 +42,7 @@ public class FeeCalculationServiceTests {
         observation.setWindSpeed(15.f);
         observation.setPhenomenon(WeatherPhenomenonClassification.SNOW);
 
-        FeeCalculationService service = new FeeCalculationService();
+        FeeCalculationServiceImpl service = new FeeCalculationServiceImpl();
         try {
             final BigDecimal scooterFee = service.calculate(location, VehicleType.SCOOTER, observation);
             assertEquals(new BigDecimal("5.50"), scooterFee);
@@ -63,7 +63,7 @@ public class FeeCalculationServiceTests {
         observation.setWindSpeed(21.2f);
         observation.setPhenomenon(WeatherPhenomenonClassification.CLOUDY);
 
-        FeeCalculationService service = new FeeCalculationService();
+        FeeCalculationServiceImpl service = new FeeCalculationServiceImpl();
         assertThrows(ForbiddenVehicleException.class, () -> {
             service.calculate(location, VehicleType.BIKE, observation);
         });
@@ -78,7 +78,7 @@ public class FeeCalculationServiceTests {
         observation.setWindSpeed(5.1f);
         observation.setPhenomenon(WeatherPhenomenonClassification.THUNDER);
 
-        FeeCalculationService service = new FeeCalculationService();
+        FeeCalculationServiceImpl service = new FeeCalculationServiceImpl();
         assertThrows(ForbiddenVehicleException.class, () -> {
             service.calculate(location, VehicleType.BIKE, observation);
         });

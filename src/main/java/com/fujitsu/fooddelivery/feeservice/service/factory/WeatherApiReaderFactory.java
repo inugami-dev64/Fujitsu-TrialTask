@@ -44,10 +44,11 @@ public class WeatherApiReaderFactory {
         return weatherApiReaders;
     }
 
-    private IlmateenistusApiReader makeIlmateenistusApiReader() {
+    private WeatherApiReader makeIlmateenistusApiReader() {
         try {
             SAXReader reader = new SAXReader();
             Document document = reader.read(new URL(IlmateenistusApiReader.ENDPOINT));
+            logger.info("Trying to construct Ilmateenistus API reader");
             return new IlmateenistusApiReader(document);
         }
         catch (DocumentException e) {
