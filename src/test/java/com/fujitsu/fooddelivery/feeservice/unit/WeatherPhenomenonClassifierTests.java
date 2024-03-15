@@ -1,4 +1,4 @@
-package com.fujitsu.fooddelivery.feeservice;
+package com.fujitsu.fooddelivery.feeservice.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -1,4 +1,4 @@
-package com.fujitsu.fooddelivery.feeservice;
+package com.fujitsu.fooddelivery.feeservice.unit;
 
 import com.fujitsu.fooddelivery.feeservice.exception.ApiException;
 import com.fujitsu.fooddelivery.feeservice.exception.WeatherApiException;

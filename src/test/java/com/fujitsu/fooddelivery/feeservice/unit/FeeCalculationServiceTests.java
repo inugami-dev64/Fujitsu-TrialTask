@@ -1,8 +1,9 @@
-package com.fujitsu.fooddelivery.feeservice;
+package com.fujitsu.fooddelivery.feeservice.unit;
 
 import com.fujitsu.fooddelivery.feeservice.exception.ForbiddenVehicleException;
 import com.fujitsu.fooddelivery.feeservice.model.*;
 import com.fujitsu.fooddelivery.feeservice.service.impl.FeeCalculationServiceImpl;
+import com.fujitsu.fooddelivery.feeservice.unit.EstonianLocationRulesFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

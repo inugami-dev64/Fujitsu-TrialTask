@@ -2,8 +2,6 @@ package com.fujitsu.fooddelivery.feeservice.service;
 
 import com.fujitsu.fooddelivery.feeservice.exception.InvalidIdentifierException;
 import com.fujitsu.fooddelivery.feeservice.model.Location;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
