@@ -8,9 +8,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-@PropertySources({
-	@PropertySource(value = "classpath")
-})
 public class FeeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FeeApplication.class, args);
