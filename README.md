@@ -78,7 +78,9 @@ In general the API endpoints can be summarized with following bullet list:
 * `GET /api/locations` represents READ all endpoint for business logic CRUD
 * `POST /api/locations` represents CREATE new endpoint for business logic CRUD
 * `PUT /api/locations/{id}` represents UPDATE endpoint for business logic CRUD
+  * `/{id}` specifies the id of the location to update
 * `DELETE /api/locations/{id}` represents DELETE endpoint for business logic CRUD
+  * `/{id}` specifies the id of the location to delete
 
 ## Business logic CRUD
 
