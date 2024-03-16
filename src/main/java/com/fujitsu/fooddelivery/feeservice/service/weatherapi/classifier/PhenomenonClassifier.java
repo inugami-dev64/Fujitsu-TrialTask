@@ -4,6 +4,11 @@ import com.fujitsu.fooddelivery.feeservice.model.WeatherPhenomenonClassification
 import java.util.regex.Pattern;
 
 public class PhenomenonClassifier {
+    /**
+     * Classifies the weather phenomenon string into WeatherPhenomenonClassification enum value
+     * @param phenomenon specifies the string to classify
+     * @return a WeatherPhenomenonClassification enum value
+     */
     public static WeatherPhenomenonClassification classify(String phenomenon) {
         if (phenomenon == null)
             return WeatherPhenomenonClassification.CLEAR;
