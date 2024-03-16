@@ -114,9 +114,11 @@ public class DatabaseSeedController {
             return ResponseEntity.notFound().build();
         }
 
-        List<Location> locations;
+        // try to generate and save all locations
         try {
-            locations = this.generateLocations();
+            List<Location> locations = this.generateLocations();
+            this.locationRepository.saveAll(locations);
+            return new ResponseEntity<>(new SuccessResponse(), HttpStatus.OK);
         }
         catch (MalformedURLException e) {
             this.logger.severe(e.getMessage());
@@ -126,14 +128,5 @@ public class DatabaseSeedController {
             this.logger.severe("Could not create instance of Document: " + e.getMessage());
             return ResponseEntity.badRequest().body(new BadRequestErrorResponse("Failed to initialize the database"));
         }
-
-        // for each location save RBF, and weather station
-        for (Location location : locations) {
-            this.regionalBaseFeeRepository.save(location.getRegionalBaseFee());
-            weatherStationRepository.save(location.getWeatherStation());
-        }
-
-        this.locationRepository.saveAll(locations);
-        return new ResponseEntity<>(new SuccessResponse(), HttpStatus.OK);
     }
 }

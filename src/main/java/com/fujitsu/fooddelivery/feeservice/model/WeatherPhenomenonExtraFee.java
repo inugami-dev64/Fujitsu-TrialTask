@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "wpef")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
