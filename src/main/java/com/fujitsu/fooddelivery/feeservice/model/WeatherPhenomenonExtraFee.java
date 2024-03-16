@@ -2,15 +2,15 @@ package com.fujitsu.fooddelivery.feeservice.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "wpef")
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class WeatherPhenomenonExtraFee extends ExtraFee {
     @Getter

@@ -17,8 +17,8 @@ import java.util.TimeZone;
 import java.util.logging.Logger;
 
 public class IlmateenistusApiReader implements WeatherApiReader {
-    private Logger logger;
-    private Document document;
+    private final Logger logger;
+    private final Document document;
     public static final String ENDPOINT = "https://www.ilmateenistus.ee/ilma_andmed/xml/observations.php";
 
     public IlmateenistusApiReader(Document document) {
@@ -57,6 +57,26 @@ public class IlmateenistusApiReader implements WeatherApiReader {
         extractLongitudeOrNull(stationNode, station);
         extractLatitudeOrNull(stationNode, station);
         return station;
+    }
+
+    @Override
+    public WeatherStation findWeatherStationByWmoCode(Integer wmoCode) {
+        Node stationNode = document.selectSingleNode("//wmocode[text() = '" + wmoCode + "']/..");
+        if (stationNode == null)
+            return null;
+
+        try {
+            WeatherStation station = new WeatherStation();
+            extractName(stationNode, station);
+            extractLongitudeOrNull(stationNode, station);
+            extractLatitudeOrNull(stationNode, station);
+            station.setWmoCode(wmoCode);
+            return station;
+        }
+        catch (WeatherApiException e) {
+            logger.warning("Could not extract station name from Ilmateenistus XML ticker API");
+            return null;
+        }
     }
 
     @Override

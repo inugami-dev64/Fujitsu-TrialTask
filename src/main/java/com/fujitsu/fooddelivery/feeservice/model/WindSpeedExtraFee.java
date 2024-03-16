@@ -2,9 +2,7 @@ package com.fujitsu.fooddelivery.feeservice.model;
 
 import jakarta.persistence.*;
 import jakarta.websocket.server.ServerEndpoint;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,7 +11,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "wsef")
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class WindSpeedExtraFee extends ExtraFee {
     @Getter
     @Setter

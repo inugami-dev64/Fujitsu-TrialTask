@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface WeatherStationRepository extends JpaRepository<WeatherStation, Integer> {
     boolean existsByName(String name);
     Optional<WeatherStation> findByName(String name);
+    Optional<WeatherStation> findByWmoCode(Integer wmo);
 }

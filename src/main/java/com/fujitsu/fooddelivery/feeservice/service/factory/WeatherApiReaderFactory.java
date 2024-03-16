@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * Factory class for constructing objects that implement WeatherApiReader interface
  */
 public class WeatherApiReaderFactory {
-    private Logger logger;
+    private final Logger logger;
     public WeatherApiReaderFactory() {
         this.logger = Logger.getLogger(WeatherApiProvider.class.getName());
     }

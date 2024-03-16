@@ -40,7 +40,7 @@ public class DatabaseSeedController {
     @Autowired
     private ExtraFeeRepository extraFeeRepository;
 
-    private Logger logger = Logger.getLogger(DatabaseSeedController.class.getName());
+    private final Logger logger = Logger.getLogger(DatabaseSeedController.class.getName());
 
     private List<ExtraFee> generateExtraFees() {
         List<ExtraFee> extraFees = new ArrayList<>();

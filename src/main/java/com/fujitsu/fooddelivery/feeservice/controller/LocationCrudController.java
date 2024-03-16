@@ -1,6 +1,7 @@
 package com.fujitsu.fooddelivery.feeservice.controller;
 
 import com.fujitsu.fooddelivery.feeservice.exception.InvalidIdentifierException;
+import com.fujitsu.fooddelivery.feeservice.exception.WeatherStationNotFoundException;
 import com.fujitsu.fooddelivery.feeservice.model.Location;
 import com.fujitsu.fooddelivery.feeservice.representation.BadRequestErrorResponse;
 import com.fujitsu.fooddelivery.feeservice.representation.ErrorResponse;
@@ -56,7 +57,7 @@ public class LocationCrudController {
      * @return location entity that was saved
      */
     @PostMapping("")
-    public ResponseEntity<Location> createLocation(@Valid @RequestBody Location location) {
+    public ResponseEntity<Location> createLocation(@Valid @RequestBody Location location) throws WeatherStationNotFoundException {
         return ResponseEntity.ok(locationCrudService.saveLocation(location));
     }
 

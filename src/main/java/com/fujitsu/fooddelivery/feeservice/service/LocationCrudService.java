@@ -1,6 +1,7 @@
 package com.fujitsu.fooddelivery.feeservice.service;
 
 import com.fujitsu.fooddelivery.feeservice.exception.InvalidIdentifierException;
+import com.fujitsu.fooddelivery.feeservice.exception.WeatherStationNotFoundException;
 import com.fujitsu.fooddelivery.feeservice.model.Location;
 
 import java.util.List;
@@ -10,8 +11,9 @@ public interface LocationCrudService {
      * Persists the given Location object
      * @param location object to persist
      * @return object that was persisted
+     * @throws WeatherStationNotFoundException
      */
-    Location saveLocation(Location location);
+    Location saveLocation(Location location) throws WeatherStationNotFoundException;
     /**
      * Fetches and returns all locations from the persistent storage
      * @return list of all Location objects that were fetched

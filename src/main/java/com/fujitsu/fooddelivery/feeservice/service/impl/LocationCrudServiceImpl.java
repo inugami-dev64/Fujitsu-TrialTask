@@ -1,11 +1,13 @@
 package com.fujitsu.fooddelivery.feeservice.service.impl;
 
 import com.fujitsu.fooddelivery.feeservice.exception.InvalidIdentifierException;
+import com.fujitsu.fooddelivery.feeservice.exception.WeatherStationNotFoundException;
 import com.fujitsu.fooddelivery.feeservice.model.ExtraFee;
 import com.fujitsu.fooddelivery.feeservice.model.Location;
 import com.fujitsu.fooddelivery.feeservice.model.RegionalBaseFee;
 import com.fujitsu.fooddelivery.feeservice.model.WeatherStation;
 import com.fujitsu.fooddelivery.feeservice.model.repository.LocationRepository;
+import com.fujitsu.fooddelivery.feeservice.model.repository.WeatherStationRepository;
 import com.fujitsu.fooddelivery.feeservice.service.LocationCrudService;
 import com.fujitsu.fooddelivery.feeservice.service.WeatherStationQueryService;
 import jakarta.validation.*;
@@ -17,13 +19,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Implementation class for LocationCrudService
+ */
 @Component(value = "locationCrudService")
 public class LocationCrudServiceImpl implements LocationCrudService {
     @Autowired
     private LocationRepository locationRepository;
     @Autowired
     private WeatherStationQueryService weatherStationQueryService;
-    private Validator validator;
+    private final Validator validator;
 
     public LocationCrudServiceImpl() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -31,7 +36,26 @@ public class LocationCrudServiceImpl implements LocationCrudService {
     }
 
     @Override
-    public Location saveLocation(Location location) {
+    public Location saveLocation(Location location) throws WeatherStationNotFoundException {
+        /* Weather station can be specified via id, name and wmo code */
+        if (location.getWeatherStation().getId() != null) {
+            WeatherStation station;
+            if ((station = weatherStationQueryService.findById(location.getWeatherStation().getId())) == null)
+                throw new WeatherStationNotFoundException("Weather station with id " + location.getWeatherStation().getId() + " does not exist");
+            location.setWeatherStation(station);
+        }
+        else if (location.getWeatherStation().getName() != null) {
+            WeatherStation station;
+            if ((station = weatherStationQueryService.findByName(location.getWeatherStation().getName())) == null)
+                throw new WeatherStationNotFoundException("Weather station with name " + location.getWeatherStation().getName() + " does not exist");
+            location.setWeatherStation(station);
+        }
+        else if (location.getWeatherStation().getWmoCode() != null) {
+            WeatherStation station;
+            if ((station = weatherStationQueryService.findByWmoCode(location.getWeatherStation().getWmoCode())) == null)
+                throw new WeatherStationNotFoundException("Weather station with wmo code " + location.getWeatherStation().getWmoCode() + " does not exist");
+            location.setWeatherStation(station);
+        }
         return locationRepository.save(location);
     }
 
@@ -60,7 +84,7 @@ public class LocationCrudServiceImpl implements LocationCrudService {
             dbLocation.setRegionalBaseFee(location.getRegionalBaseFee());
         }
 
-        // update extra fee rules is necessary
+        // update extra fee rules if requested
         if (location.getExtraFees() != null) {
             Set<ConstraintViolation<ExtraFee>> extraFeeViolations = new HashSet<>();
             for (ExtraFee extraFee : location.getExtraFees()) {
@@ -76,11 +100,16 @@ public class LocationCrudServiceImpl implements LocationCrudService {
             dbLocation.setExtraFees(location.getExtraFees());
         }
 
-        // weather station
-        if (location.getWeatherStation() != null && location.getWeatherStation().getName() != null) {
-            WeatherStation station = weatherStationQueryService.findByName(location.getWeatherStation().getName());
-            if (station == null)
+        // weather stations can be updated by providing either local database id, name or wmo code
+        if (location.getWeatherStation() != null) {
+            WeatherStation station = null;
+            if (location.getWeatherStation().getName() != null && (station = weatherStationQueryService.findByName(location.getWeatherStation().getName())) == null)
                 throw new InvalidIdentifierException("Invalid weather station name identifier '" + location.getWeatherStation().getName() + "'");
+            else if (station == null && location.getWeatherStation().getId() != null && (station = weatherStationQueryService.findById(location.getWeatherStation().getId())) == null)
+                throw new InvalidIdentifierException("Invalid weather station ID " + location.getWeatherStation().getId());
+            else if (station == null && location.getWeatherStation().getWmoCode() != null && (station = weatherStationQueryService.findByWmoCode(location.getWeatherStation().getWmoCode())) == null)
+                throw new InvalidIdentifierException("Invalid weather station wmo code " + location.getWeatherStation().getWmoCode());
+
             dbLocation.setWeatherStation(station);
         }
 

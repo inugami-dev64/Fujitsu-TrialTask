@@ -44,9 +44,26 @@ public class WeatherStationQueryServiceImpl implements WeatherStationQueryServic
         if (optRepoWeatherStation.isPresent())
             return optRepoWeatherStation.get();
 
+        // query from external APIs
         for (WeatherApiReader reader : weatherApiReaders) {
             WeatherStation station;
             if ((station = reader.findWeatherStationByName(name)) != null)
+                return station;
+        }
+
+        return null;
+    }
+
+    @Override
+    public WeatherStation findByWmoCode(Integer wmo) {
+        Optional<WeatherStation> optRepoWeatherStation = weatherStationRepository.findByWmoCode(wmo);
+        if (optRepoWeatherStation.isPresent())
+            return optRepoWeatherStation.get();
+
+        // query from external APIs
+        for (WeatherApiReader reader : weatherApiReaders) {
+            WeatherStation station;
+            if ((station = reader.findWeatherStationByWmoCode(wmo)) != null)
                 return station;
         }
 

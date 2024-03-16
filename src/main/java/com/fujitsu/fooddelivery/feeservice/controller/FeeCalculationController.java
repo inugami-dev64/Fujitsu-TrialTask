@@ -37,7 +37,7 @@ public class FeeCalculationController {
     private WeatherObservationRepository weatherObservationRepository;
     @Autowired
     private FeeCalculationService feeCalculationService;
-    private Logger logger;
+    private final Logger logger;
 
 
     public FeeCalculationController() {

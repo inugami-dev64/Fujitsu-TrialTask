@@ -21,55 +21,124 @@ import static org.junit.jupiter.api.Assertions.*;
  * Badly written unit tests for testing IlmateenistusApiReader
  */
 public class IlmateenistusApiReaderTests {
-    @Test
-    @DisplayName("Ensure that findWeatherStationByName() doesn't return null with valid XML values")
-    void testFindWeatherStationByName_OneStationEntry_NotNull() throws DocumentException {
-        final String testXml = """
-            <observations timestamp=\"1337000\">
-                <station>
-                    <name>Kuressaare linn</name>
-                    <wmocode/>
-                    <longitude>22.48944444411111</longitude>
-                    <latitude>58.26416666666667</latitude>
-                </station>
-            </observations>
-            """;
-
-        Document document = DocumentHelper.parseText(testXml);
-        WeatherApiReader reader = new IlmateenistusApiReader(document);
-        assertNotNull(reader.findWeatherStationByName("Kuressaare linn"));
-    }
+    private static final double DOUBLE_ERROR_MARGIN = 0.00001;
 
     @Test
-    @DisplayName("Ensure that findWeatherStationByName() returns a WeatherStation object that contains a valid name, WMO code, and longitude/latitude")
-    void testFindWeatherStationByName_OneStationEntry_CorrectNameWMOLongitudeLatitude() throws DocumentException {
+    @DisplayName("Ensure that findWeatherStationByName() returns a valid WeatherStation object whose data matches the XML")
+    void testFindWeatherStationByName_NotNull() throws DocumentException {
         final String testXml = """
-            <observations timestamp=\"1337000\">
+            <observations timestamp="1337000">
                 <station>
                     <name>Kuressaare linn</name>
                     <wmocode>1234</wmocode>
                     <longitude>22.48944444411111</longitude>
                     <latitude>58.26416666666667</latitude>
                 </station>
+                <station>
+                    <name>Narva</name>
+                    <wmocode>1337</wmocode>
+                    <longitude>24.48944444411111</longitude>
+                    <latitude>58.46416666666667</latitude>
+                </station>
             </observations>
             """;
 
-        final double maxErrorMargin = 0.00001;
+        Document document = DocumentHelper.parseText(testXml);
+        WeatherApiReader reader = new IlmateenistusApiReader(document);
+        WeatherStation station;
+        assertNotNull((station = reader.findWeatherStationByName("Kuressaare linn")));
+        assertEquals("Kuressaare linn", station.getName());
+        assertEquals(1234, station.getWmoCode());
+        assertTrue(Math.abs(station.getLongitude() - 22.48944444411111) < DOUBLE_ERROR_MARGIN);
+        assertTrue(Math.abs(station.getLatitude() - 58.26416666666667) < DOUBLE_ERROR_MARGIN);
+    }
+
+    @Test
+    @DisplayName("Ensure that findWeatherStationByName() returns null when station was not found")
+    void testFindWeatherStationByName_Null() throws DocumentException {
+        final String testXml = """
+            <observations timestamp="1337000">
+                <station>
+                    <name>Kuressaare linn</name>
+                    <wmocode>1234</wmocode>
+                    <longitude>22.48944444411111</longitude>
+                    <latitude>58.26416666666667</latitude>
+                </station>
+                <station>
+                    <name>Narva</name>
+                    <wmocode>1337</wmocode>
+                    <longitude>24.48944444411111</longitude>
+                    <latitude>58.46416666666667</latitude>
+                </station>
+            </observations>
+            """;
 
         Document document = DocumentHelper.parseText(testXml);
         WeatherApiReader reader = new IlmateenistusApiReader(document);
-        WeatherStation station = reader.findWeatherStationByName("Kuressaare linn");
-        assertEquals("Kuressaare linn", station.getName());
-        assertEquals(1234, station.getWmoCode());
-        assertTrue(Math.abs(station.getLongitude() - 22.48944444411111) < maxErrorMargin);
-        assertTrue(Math.abs(station.getLatitude() - 58.26416666666667) < maxErrorMargin);
+        assertNull(reader.findWeatherStationByName("Kükametsa"));
     }
+
+    @Test
+    @DisplayName("Ensure that findWeatherStationByWmoCode() returns a valid WeatherStation object which matches the XML")
+    void testFindWeatherStationByWmoCode_NotNull() throws DocumentException {
+        final String testXml = """
+            <observations timestamp="1337000">
+                <station>
+                    <name>Kuressaare linn</name>
+                    <wmocode>1234</wmocode>
+                    <longitude>22.48944444411111</longitude>
+                    <latitude>58.26416666666667</latitude>
+                </station>
+                <station>
+                    <name>Narva</name>
+                    <wmocode>1337</wmocode>
+                    <longitude>24.48944444411111</longitude>
+                    <latitude>58.46416666666667</latitude>
+                </station>
+            </observations>
+            """;
+
+        Document document = DocumentHelper.parseText(testXml);
+        WeatherApiReader reader = new IlmateenistusApiReader(document);
+        WeatherStation station;
+        assertNotNull((station = reader.findWeatherStationByWmoCode(1337)));
+        assertEquals("Narva", station.getName());
+        assertEquals(1337, station.getWmoCode());
+        assertTrue(Math.abs(station.getLongitude() - 24.48944444411111) < DOUBLE_ERROR_MARGIN);
+        assertTrue(Math.abs(station.getLatitude() - 58.46416666666667) < DOUBLE_ERROR_MARGIN);
+    }
+
+    @Test
+    @DisplayName("Ensure that findWeatherStationByWmoCode() returns null when station was not found")
+    void testFindWeatherStationByWmoCode_Null() throws DocumentException {
+        final String testXml = """
+            <observations timestamp="1337000">
+                <station>
+                    <name>Kuressaare linn</name>
+                    <wmocode>1234</wmocode>
+                    <longitude>22.48944444411111</longitude>
+                    <latitude>58.26416666666667</latitude>
+                </station>
+                <station>
+                    <name>Narva</name>
+                    <wmocode>1337</wmocode>
+                    <longitude>24.48944444411111</longitude>
+                    <latitude>58.46416666666667</latitude>
+                </station>
+            </observations>
+            """;
+
+        Document document = DocumentHelper.parseText(testXml);
+        WeatherApiReader reader = new IlmateenistusApiReader(document);
+        assertNull(reader.findWeatherStationByWmoCode(2024));
+    }
+
 
     @Test
     @DisplayName("Ensure that findAllStations() throws a WeatherApiResponseException when station name is missing")
     void testFindAllStations_OneStationEntry_InvalidNameTag() throws DocumentException {
         final String testXml = """
-            <observations timestamp=\"1337000\">
+            <observations timestamp="1337000">
                 <station>
                     <name/>
                     <wmocode>1234</wmocode>
@@ -88,7 +157,7 @@ public class IlmateenistusApiReaderTests {
     @DisplayName("Ensure that findAllStations() can return multiple stations specified in the XML document")
     void testFindAllStations_MultipleEntries() throws DocumentException {
         final String testXml = """
-            <observations timestamp=\"1337000\">
+            <observations timestamp="1337000">
                 <station>
                     <name>Kuressaare linn</name>
                     <wmocode>1234</wmocode>
@@ -175,7 +244,7 @@ public class IlmateenistusApiReaderTests {
     @DisplayName("Ensure that WeatherStationNotFoundException is thrown in findTheMostRecentObservationByStation() when station does not exist in the DOM")
     void testFindTheMostRecentObservationByStation_OneStationEntry_NoStationInDOM() throws DocumentException {
         final String testXml = """
-            <observations timestamp=\"1337000\">
+            <observations timestamp="1337000">
                 <station>
                     <name>Kuressaare linn</name>
                     <wmocode>1234</wmocode>
@@ -202,7 +271,7 @@ public class IlmateenistusApiReaderTests {
     @DisplayName("Ensure that WeatherApiResponseException is thrown in findTheMostRecentObservationByStation() when the air temperature data is missing")
     void testFindTheMostRecentObservationByStation_OneStationEntry_NoAirTemperature() throws DocumentException {
         final String testXml = """
-            <observations timestamp=\"1337000\">
+            <observations timestamp="1337000">
                 <name>Kuressaare linn</name>
                 <wmocode>1337</wmocode>
                 <longitude>22.48944444411111</longitude>
@@ -230,7 +299,7 @@ public class IlmateenistusApiReaderTests {
     @DisplayName("Ensure that WeatherApiResponseException is thrown in findTheMostRecentObservationByStation() when the wind speed data is missing")
     void testFindTheMostRecentObservationByStation_OneStationEntry_NoWindSpeed() throws DocumentException {
         final String testXml = """
-            <observations timestamp=\"1337000\">
+            <observations timestamp="1337000">
                 <name>Kuressaare linn</name>
                 <wmocode>1337</wmocode>
                 <longitude>22.48944444411111</longitude>

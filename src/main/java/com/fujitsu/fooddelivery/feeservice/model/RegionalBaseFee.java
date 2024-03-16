@@ -2,14 +2,15 @@ package com.fujitsu.fooddelivery.feeservice.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "rbf")
+@Builder
+@EqualsAndHashCode
+@AllArgsConstructor
 @NoArgsConstructor
 public class RegionalBaseFee {
     @Id

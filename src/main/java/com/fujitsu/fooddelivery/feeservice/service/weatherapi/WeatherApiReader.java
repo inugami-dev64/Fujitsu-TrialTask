@@ -17,12 +17,18 @@ public interface WeatherApiReader {
     WeatherObservation findTheMostRecentObservationByStation(WeatherStation station) throws WeatherApiException;
 
     /**
-     * Find a a weather station by specified station's name
+     * Find a weather station by specified station's name
      * @param name station's name to use for searching
-     * @return a valid WeatherStation object if such station exists or null of it doesn't exist
+     * @return a valid WeatherStation object if such station exists or null if it doesn't exist
      */
     WeatherStation findWeatherStationByName(String name);
 
+    /**
+     * Find a weather station by specified wmo code
+     * @param wmo station's wmo code to use for searching
+     * @return a valid WeatherStation object if such station exists or null if it doesn't exist
+     */
+    WeatherStation findWeatherStationByWmoCode(Integer wmo);
     /**
      * Query all weather stations supported by implementation specific API
      * @return a list containing all WeatherStation objects that were returned by the API

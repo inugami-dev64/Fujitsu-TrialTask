@@ -1,9 +1,7 @@
 package com.fujitsu.fooddelivery.feeservice.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,7 +9,9 @@ import java.time.LocalDateTime;
 import java.util.Set;
 @Entity
 @Table(name = "atef")
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class AirTemperatureExtraFee extends ExtraFee {
     @Getter
     @Setter
